@@ -5,6 +5,11 @@
     <UserSecretsId>aspnet-Muzziq-51ECECB0-4011-492B-BF3E-0073164A9AC8</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20181028180352_InitialCreate.cs" />
+    <Compile Remove="Data\Migrations\20181028180352_InitialCreate.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />

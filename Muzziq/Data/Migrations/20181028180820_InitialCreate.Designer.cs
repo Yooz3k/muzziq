@@ -11,9 +11,10 @@ using System;
 namespace Muzziq.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181028180820_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,84 +180,6 @@ namespace Muzziq.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Muzziq.Models.Entities.Match", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("EndDate");
-
-                    b.Property<int>("ModeratorId");
-
-                    b.Property<string>("RoomName");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Matches");
-                });
-
-            modelBuilder.Entity("Muzziq.Models.Entities.Player", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Nickname")
-                        .IsRequired();
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Players");
-                });
-
-            modelBuilder.Entity("Muzziq.Models.Entities.Result", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("CorrectAnswersCount");
-
-                    b.Property<int?>("MatchId");
-
-                    b.Property<int?>("PlayerId");
-
-                    b.Property<int>("Points");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MatchId");
-
-                    b.HasIndex("PlayerId");
-
-                    b.ToTable("Results");
-                });
-
-            modelBuilder.Entity("Muzziq.Models.Entities.Song", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Album");
-
-                    b.Property<string>("Author");
-
-                    b.Property<byte[]>("BinaryContent");
-
-                    b.Property<string>("Genre");
-
-                    b.Property<string>("Title")
-                        .IsRequired();
-
-                    b.Property<int>("Year");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Songs");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
@@ -300,24 +223,6 @@ namespace Muzziq.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Muzziq.Models.Entities.Player", b =>
-                {
-                    b.HasOne("Muzziq.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("Muzziq.Models.Entities.Result", b =>
-                {
-                    b.HasOne("Muzziq.Models.Entities.Match", "Match")
-                        .WithMany("MatchResults")
-                        .HasForeignKey("MatchId");
-
-                    b.HasOne("Muzziq.Models.Entities.Player", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId");
                 });
 #pragma warning restore 612, 618
         }
