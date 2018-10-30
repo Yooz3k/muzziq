@@ -33,6 +33,8 @@ namespace Muzziq
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddSingleton<IWSService, WSService>();
+
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
@@ -54,6 +56,17 @@ namespace Muzziq
             }
 
             app.UseStaticFiles();
+
+            var webSocketOptions = new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(120),
+                ReceiveBufferSize = 4 * 1024
+            };
+            app.UseWebSockets(webSocketOptions);
+
+            app.Use(async (context, next) => {
+                await new WSService().Recive(context, next);
+                });
 
             app.UseAuthentication();
 
