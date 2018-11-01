@@ -13,25 +13,24 @@ namespace Muzziq.Services
 {
     public interface IWSService
     {
-        void SendAll(string message);
+        void SendAll(WSMessage message);
         Task Recive(HttpContext context, Func<Task> next);
     }
 
     public class WSService : IWSService
     {
-        private static IDictionary WebSockets = new Dictionary<string, WebSocket>();
-        private const string SEPARATOR = " ";
+        private static Dictionary<Guid, WebSocket> WebSockets = new Dictionary<Guid, WebSocket>();
         private const int BUFFER_SIZE = 4096;
 
         public async Task Recive(HttpContext context, Func<Task> next)
         {
             if (context.WebSockets.IsWebSocketRequest)
             {
-                string id = context.Request.Path.ToString();
+                Guid uid = Guid.NewGuid(); //whatever
                 byte[] buffer;
                 WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                WebSockets.Add(id, webSocket);
-
+                WebSockets.Add(uid, webSocket);
+                Console.WriteLine("Add webSocket with uid: " + uid);
                 WebSocketReceiveResult result = null;
                 do
                 {
@@ -39,17 +38,15 @@ namespace Muzziq.Services
                     result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                     string messageBufferSize = Encoding.UTF8.GetString(buffer);
                     string message = messageBufferSize.Substring(0, messageBufferSize.IndexOf('\0'));
-                    WSMessage wsMessage = new WSMessage
-                    {
-                        Type = getMessageType(message),
-                        Text = getMessageText(message)
-                    };
+                    WSMessage wsMessage = new WSMessage(message);
                     Console.WriteLine("wsMessage.Type: " + wsMessage.Type);
                     Console.WriteLine("wsMessage.Text: " + wsMessage.Text);
-                    Dispatch(wsMessage);
+                    Dispatch(wsMessage, uid);
+                    SendAll(new WSMessage(WSMessageType.SCORE, "Zdobyles 100 punktow"));
                 } while (result != null && !result.CloseStatus.HasValue);
                 await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
-                WebSockets.Remove(id);
+                Console.WriteLine("Remove webSocket with uid: " + uid);
+                WebSockets.Remove(uid);
             }
             else
             {
@@ -57,16 +54,23 @@ namespace Muzziq.Services
             }
         }
 
-        public async void SendAll(string message)
+        public async void SendAll(WSMessage message)
         {
-            foreach (WebSocket webSocket in WebSockets)
+            foreach (WebSocket webSocket in WebSockets.Values)
             {
-                byte[] bytes = Encoding.ASCII.GetBytes(message);
+                byte[] bytes = Encoding.ASCII.GetBytes(message.MessageToSend);
                 await webSocket.SendAsync(new ArraySegment<byte>(bytes, 0, bytes.Length), WebSocketMessageType.Text, true, CancellationToken.None);
             }
         }
 
-        private void Dispatch(WSMessage message)
+        public async void Send(WSMessage message, Guid uid)
+        {
+            WebSocket webSocket = WebSockets[uid];
+            byte[] bytes = Encoding.ASCII.GetBytes(message.MessageToSend);
+            await webSocket.SendAsync(new ArraySegment<byte>(bytes, 0, bytes.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+
+        private void Dispatch(WSMessage message, Guid uid)
         {
             switch (message.Type)
             {
@@ -77,30 +81,6 @@ namespace Muzziq.Services
             }
         }
 
-        private WSMessageType getMessageType(string message)
-        {
-            string firstWord = message.Split(SEPARATOR)[0];
-            if (Enum.TryParse(firstWord, out WSMessageType messageType))
-            {
-                return messageType;
-            }
-            else
-            {
-                return WSMessageType.OTHER;
-            }
-        }
 
-        private string getMessageText(string message)
-        {
-            try
-            {
-                string text = message.Substring(message.Split(SEPARATOR)[0].Length);
-                return text.Trim();
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
     }
 }

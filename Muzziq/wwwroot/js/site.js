@@ -6,11 +6,12 @@ var sendButton = document.getElementById("sendButton");
 var commsLog = document.getElementById("commsLog");
 var closeButton = document.getElementById("closeButton");
 var socket;
+var SEPARATOR = " ";
 
 var scheme = document.location.protocol === "https:" ? "wss" : "ws";
 var port = document.location.port ? (":" + document.location.port) : "";
 
-connectionUrl.value = scheme + "://" + document.location.hostname + port + "/ws";
+connectionUrl.value = scheme + "://" + document.location.hostname + port;
 
 function updateState() {
     function disable() {
@@ -68,6 +69,8 @@ sendButton.onclick = function () {
     if (!socket || socket.readyState !== WebSocket.OPEN) {
         alert("socket not connected");
     }
+    //Add messageType and Separator to sendData
+    // var data = WSMessageType.TEXT + SEPARATOR + sendMessage.value;
     var data = sendMessage.value;
     socket.send(data);
     commsLog.innerHTML += '<tr>' +
@@ -92,11 +95,14 @@ connectButton.onclick = function () {
             '</tr>';
     };
     socket.onerror = updateState;
+
     socket.onmessage = function (event) {
-        commsLog.innerHTML += '<tr>' +
-            '<td class="commslog-server">Server</td>' +
-            '<td class="commslog-client">Client</td>' +
-            '<td class="commslog-data">' + htmlEscape(event.data) + '</td></tr>';
+        //commsLog.innerHTML += '<tr>' +
+        //    '<td class="commslog-server">Server</td>' +
+        //    '<td class="commslog-client">Client</td>' +
+        //    '<td class="commslog-data">' + htmlEscape(event.data) + '</td></tr>';
+        console.log("Przyszla wiadomosc: " + event.data)
+        dispatch(event.data);
     };
 };
 
@@ -107,4 +113,42 @@ function htmlEscape(str) {
         .replace(/'/g, '&#39;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
+}
+
+var WSMessageType = {
+    TEXT: "TEXT",
+    SCORE: "SCORE",
+    AUDIO: "AUDIO",
+    OTHER: "OTHER",
+}
+
+function dispatch(message) {
+    var type = message.split(SEPARATOR)[0];
+    console.log(type);
+    var text = message.substr(message.indexOf(" ")).trim();
+    console.log(text);
+
+    switch (type) {
+        case WSMessageType.AUDIO:
+            playMusic(text);
+            break;
+        case WSMessageType.SCORE:
+            console.log(2);
+            break;
+        case WSMessageType.TEXT:
+            console.log(3);
+            break;
+        case WSMessageType.OTHER:
+            console.log(4);
+            break;
+        default:
+            console.log(5);
+            break;  
+    }
+}
+
+// functions for different message types:
+
+function playMusic(text) {
+    var ctx = new AudioContext();
 }
