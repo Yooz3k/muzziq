@@ -13,8 +13,10 @@ namespace Muzziq.Services
 {
     public interface IWSService
     {
-        void SendAll(WSMessage message);
         Task Recive(HttpContext context, Func<Task> next);
+        void SendAll(WSMessage message);
+        void SendMessage(WSMessage message, Guid uid);
+        void SendAudio(byte[] bytes, Guid uid);
     }
 
     public class WSService : IWSService
@@ -42,7 +44,12 @@ namespace Muzziq.Services
                     Console.WriteLine("wsMessage.Type: " + wsMessage.Type);
                     Console.WriteLine("wsMessage.Text: " + wsMessage.Text);
                     Dispatch(wsMessage, uid);
-                    SendAll(new WSMessage(WSMessageType.SCORE, "Zdobyles 100 punktow"));
+
+                    //To other function to send audio
+                    
+                    SendAudio(null, uid);
+                    
+
                 } while (result != null && !result.CloseStatus.HasValue);
                 await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
                 Console.WriteLine("Remove webSocket with uid: " + uid);
@@ -59,15 +66,24 @@ namespace Muzziq.Services
             foreach (WebSocket webSocket in WebSockets.Values)
             {
                 byte[] bytes = Encoding.ASCII.GetBytes(message.MessageToSend);
-                await webSocket.SendAsync(new ArraySegment<byte>(bytes, 0, bytes.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+                await webSocket.SendAsync(new ArraySegment<byte>(bytes, 0, bytes.Length), WebSocketMessageType.Binary, true, CancellationToken.None);
             }
         }
 
-        public async void Send(WSMessage message, Guid uid)
+        public async void SendMessage(WSMessage message, Guid uid)
         {
             WebSocket webSocket = WebSockets[uid];
             byte[] bytes = Encoding.ASCII.GetBytes(message.MessageToSend);
             await webSocket.SendAsync(new ArraySegment<byte>(bytes, 0, bytes.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+
+        public async void SendAudio(byte[] bytes, Guid uid)
+        {
+            WebSocket webSocket = WebSockets[uid];
+            byte[] bytes2 = System.IO.File.ReadAllBytes(@"C:\Users\Tomasz\Downloads\NASZE_POLSKIE_ABC.mp3");
+            SendMessage(new WSMessage(WSMessageType.AUDIO_START, string.Empty), uid);
+            await webSocket.SendAsync(new ArraySegment<byte>(bytes2, 0, bytes2.Length), WebSocketMessageType.Binary, true, CancellationToken.None);
+            SendMessage(new WSMessage(WSMessageType.AUDIO_END, string.Empty), uid);
         }
 
         private void Dispatch(WSMessage message, Guid uid)
@@ -76,7 +92,8 @@ namespace Muzziq.Services
             {
                 case WSMessageType.TEXT: break;
                 case WSMessageType.SCORE: break;
-                case WSMessageType.AUDIO: break;
+                case WSMessageType.AUDIO_START: break;
+                case WSMessageType.AUDIO_END: break;
                 case WSMessageType.OTHER: break;
             }
         }

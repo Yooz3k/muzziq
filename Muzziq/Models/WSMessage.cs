@@ -9,7 +9,8 @@ namespace Muzziq.Models
     {
         TEXT,
         SCORE,
-        AUDIO,
+        AUDIO_START,
+        AUDIO_END,
         OTHER,
     }
     public class WSMessage

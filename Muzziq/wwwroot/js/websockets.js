@@ -9,6 +9,7 @@ var commsLog = document.getElementById("commsLog");
 var closeButton = document.getElementById("closeButton");
 var socket;
 var SEPARATOR = " ";
+var readyToReciveAudio = false;
 
 var scheme = document.location.protocol === "https:" ? "wss" : "ws";
 var port = document.location.port ? (":" + document.location.port) : "";
@@ -92,7 +93,8 @@ function htmlEscape(str) {
 var WSMessageType = {
     TEXT: "TEXT",
     SCORE: "SCORE",
-    AUDIO: "AUDIO",
+    AUDIO_START: "AUDIO_START",
+    AUDIO_END: "AUDIO_END",
     OTHER: "OTHER",
 }
 
@@ -136,32 +138,59 @@ function send(messageType, text) {
 }
 
 function dispatch(message) {
-    var type = message.split(SEPARATOR)[0];
-    console.log(type);
-    var text = message.substr(message.indexOf(" ")).trim();
-    console.log(text);
 
-    switch (type) {
-        case WSMessageType.AUDIO:
-            playMusic(text);
-            break;
-        case WSMessageType.SCORE:
-            console.log(2);
-            break;
-        case WSMessageType.TEXT:
-            console.log(3);
-            break;
-        case WSMessageType.OTHER:
-            console.log(4);
-            break;
-        default:
-            console.log(5);
-            break;
+    if (message instanceof Blob && readyToReciveAudio) {
+        audio = event.data;
+        playMusic(audio);
+    } else {
+        var type = message.split(SEPARATOR)[0];
+        console.log(type);
+        var text = message.substr(message.indexOf(SEPARATOR)).trim();
+        console.log(text);
+
+        switch (type) {
+            case WSMessageType.AUDIO_START:
+                readyToReciveAudio = true;
+                break;
+            case WSMessageType.AUDIO_END:
+                readyToReciveAudio = false;
+                break;
+            case WSMessageType.SCORE:
+                console.log(2);
+                break;
+            case WSMessageType.TEXT:
+                console.log(3);
+                break;
+            case WSMessageType.OTHER:
+                console.log(4);
+                break;
+            default:
+                console.log(5);
+                break;
+        }
     }
+
+
+
+    
 }
 
 // functions for different message types - should be in site.js:
 
-function playMusic(text) {
+function playMusic(audio) {
     var ctx = new AudioContext();
+    var source = ctx.createBufferSource();
+
+    var fileReader = new FileReader();
+    fileReader.onload = function (event) {
+        var arrayBuffer = event.target.result;
+        ctx.decodeAudioData(arrayBuffer, function (buffer) {
+            source.buffer = buffer;
+            source.connect(ctx.destination);
+            source.start();
+        })
+    };
+    fileReader.readAsArrayBuffer(audio);
+
+    console.log("Odtwarzanie muzyki " + audio)
 }
