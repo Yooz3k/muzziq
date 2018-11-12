@@ -80,7 +80,7 @@ namespace Muzziq.Services
         public async void SendAudio(byte[] bytes, Guid uid)
         {
             WebSocket webSocket = WebSockets[uid];
-            byte[] bytes2 = System.IO.File.ReadAllBytes(@"C:\Users\Tomasz\Downloads\NASZE_POLSKIE_ABC.mp3");
+            byte[] bytes2 = System.IO.File.ReadAllBytes(@"C:\Users\Łukasz\Downloads\asd.mp3");
             SendMessage(new WSMessage(WSMessageType.AUDIO_START, string.Empty), uid);
             await webSocket.SendAsync(new ArraySegment<byte>(bytes2, 0, bytes2.Length), WebSocketMessageType.Binary, true, CancellationToken.None);
             SendMessage(new WSMessage(WSMessageType.AUDIO_END, string.Empty), uid);

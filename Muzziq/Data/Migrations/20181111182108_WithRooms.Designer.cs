@@ -11,9 +11,10 @@ using System;
 namespace Muzziq.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181111182108_WithRooms")]
+    partial class WithRooms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,15 +187,11 @@ namespace Muzziq.Data.Migrations
 
                     b.Property<DateTime>("EndDate");
 
-                    b.Property<int?>("RoomId");
+                    b.Property<int>("ModeratorId");
 
                     b.Property<string>("RoomName");
 
-                    b.Property<int>("WinnerId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("RoomId");
 
                     b.ToTable("Matches");
                 });
@@ -270,11 +267,11 @@ namespace Muzziq.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
-
-                    b.Property<int>("OwnerId");
+                    b.Property<int?>("MatchId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
 
                     b.ToTable("Room");
                 });
@@ -324,13 +321,6 @@ namespace Muzziq.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Muzziq.Models.Entities.Match", b =>
-                {
-                    b.HasOne("Muzziq.Models.Room")
-                        .WithMany("Matches")
-                        .HasForeignKey("RoomId");
-                });
-
             modelBuilder.Entity("Muzziq.Models.Entities.Player", b =>
                 {
                     b.HasOne("Muzziq.Models.Room")
@@ -351,6 +341,13 @@ namespace Muzziq.Data.Migrations
                     b.HasOne("Muzziq.Models.Entities.Player", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId");
+                });
+
+            modelBuilder.Entity("Muzziq.Models.Room", b =>
+                {
+                    b.HasOne("Muzziq.Models.Entities.Match", "Match")
+                        .WithMany()
+                        .HasForeignKey("MatchId");
                 });
 #pragma warning restore 612, 618
         }
