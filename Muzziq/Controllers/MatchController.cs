@@ -8,15 +8,31 @@ namespace Muzziq.Controllers
 {
     public class MatchController : Controller
     {
-        public IActionResult Match
-            ()
+        public IActionResult MatchView()
         {
+            // TODO dużo rzeczy
+
             return View();
         }
 
-        public IActionResult MatchSummary()
+        public IActionResult StartMatch()
         {
-            return View();
+            // TODO przechwycenie, jaki mecz jest tworzony
+
+            // utworzenie meczu
+
+            // rozgrywka
+
+            return View("MatchView");
+        }
+
+        public IActionResult EndMatch()
+        {
+            // TODO zapisanie rozgrywki
+
+            // TODO zwrócenie listy wyników
+
+            return View("MatchSummaryView");
         }
     }
 }
