@@ -30,13 +30,13 @@
             </div>
             <div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
-					<li><a asp-area="" asp-controller="Room" asp-action="ChooseRoomView">Lista pokoi</a></li>
-					<li><a asp-area="" asp-controller="Room" asp-action="CreateRoomView">Utwórz pokój</a></li>
-					<li><a asp-area="" asp-controller="Room" asp-action="Test">Strefa testów</a></li>
+					<li><a class="menu-element" asp-area="" asp-controller="Room" asp-action="ChooseRoomView">Lista pokoi</a></li>
+					<li><a class="menu-element" asp-area="" asp-controller="Room" asp-action="CreateRoomView">Utwórz pokój</a></li>
+					<li><a class="menu-element" asp-area="" asp-controller="Room" asp-action="Test">Strefa testów</a></li>
 					@*<li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
 					<li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
 		<li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>*@
-					<li><a asp-area="" asp-controller="TestWS" asp-action="Index">Testuj WebSocket</a></li>
+					<li><a class="menu-element" asp-area="" asp-controller="TestWS" asp-action="Index">Testuj WebSocket</a></li>
 				</ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
