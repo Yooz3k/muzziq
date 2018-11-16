@@ -29,12 +29,14 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Muzziq</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                    <li><a asp-area="" asp-controller="TestWS" asp-action="Index">TestWS</a></li>
-                </ul>
+				<ul class="nav navbar-nav">
+					<li><a asp-area="" asp-controller="Room" asp-action="ChooseRoom">Lista pokoi</a></li>
+					<li><a asp-area="" asp-controller="Room" asp-action="CreateRoom">Utwórz pokój</a></li>
+					@*<li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+					<li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
+		<li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>*@
+					<li><a asp-area="" asp-controller="TestWS" asp-action="Index">Testuj WebSocket</a></li>
+				</ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
@@ -43,7 +45,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2018 - Muzziq</p>
+            <p>&copy; 2018 - Muzziq. Wszystkie prawa zastrzeżone.</p>
         </footer>
     </div>
 

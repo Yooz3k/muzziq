@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Muzziq.Models.AccountViewModels
+namespace Muzziq.Models.LoginViewModels
 {
     public class LoginViewModel
     {
@@ -15,8 +15,5 @@ namespace Muzziq.Models.AccountViewModels
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-
-        [Display(Name = "Zapamiętaj mnie")]
-        public bool RememberMe { get; set; }
     }
 }
