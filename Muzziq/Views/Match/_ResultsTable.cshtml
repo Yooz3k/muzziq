@@ -1,10 +1,13 @@
 ﻿@{ 
     int position = 0;
+
     Match match = ViewBag.Match;
+    List<Result> results = match.MatchResults;
+    results.Sort((p, q) => q.Points.CompareTo(p.Points));
 }
 
 <div>
-    <table>
+    <table class="table table-bordered table-responsive table-hover" width="200">
         <thead>
             <tr>
                 <td>
@@ -24,7 +27,7 @@
             position++;
             <tr>
                 <td>
-                    @position
+                    @position.
                 </td>
                 <td>
                     @result.Player.Nickname
