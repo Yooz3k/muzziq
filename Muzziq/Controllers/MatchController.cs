@@ -46,7 +46,40 @@ namespace Muzziq.Controllers
 
             // TODO zwrócenie listy wyników
 
+            Match match = prepareTestData();
+            ViewData["Match"] = match;
+
             return View("MatchSummaryView");
+        }
+
+        private Match prepareTestData()
+        {
+            Match sampleMatch = new Match();
+            sampleMatch.RoomName = "piwnica";
+
+            List<Result> results = new List<Result>();
+            Player player1 = new Player(null, "jolka");
+            Player player2 = new Player(null, "jolka,");
+            Player player3 = new Player(null, "pamietasz");
+
+            Result res1 = new Result();
+            Result res2 = new Result();
+            Result res3 = new Result();
+
+            res1.Player = player1;
+            res1.Points = 500;
+            res2.Player = player2;
+            res2.Points = 444;
+            res3.Player = player3;
+            res3.Points = 404;
+
+            results.Add(res1);
+            results.Add(res2);
+            results.Add(res3);
+
+            sampleMatch.MatchResults = results;
+
+            return sampleMatch;
         }
     }
 }
