@@ -21,6 +21,6 @@ TODO progressbar, czas do końca
 TODO lista przycisków
 <br />
 
-Koniec meczu?
+<h4>Koniec meczu?</h4>
 <br />
-<a asp-area="" asp-controller="Match" asp-action="EndMatch">Zakończ</a>
+<input type="button" value="Zakończ" onclick="location.href='@Url.Action("EndMatch", "Match")'" />

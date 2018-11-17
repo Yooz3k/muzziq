@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-Muzziq-51ECECB0-4011-492B-BF3E-0073164A9AC8</UserSecretsId>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>

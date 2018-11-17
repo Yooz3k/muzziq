@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Muzziq.Data;
 using Muzziq.Models.Entities;
+using Muzziq.Models.RoomViewModels;
 using Muzziq.Services;
 
 namespace Muzziq.Controllers
@@ -13,8 +14,10 @@ namespace Muzziq.Controllers
   
     public class RoomController : Controller
     {
+        // listy na potrzeby testów interfejsu, docelowo te obiekty nie będą trzymane w listach, ale w bazie danych
         private List<Song> availableSongs;
         private List<Match> availableMatches;
+        private CreateRoomViewModel createRoomViewModel;
 
         private readonly RoomService roomService;
 
@@ -56,6 +59,8 @@ namespace Muzziq.Controllers
 
             availableMatches.Add(match1);
             availableMatches.Add(match2);
+
+            createRoomViewModel = new CreateRoomViewModel(availableSongs);
         }
 
        
@@ -71,7 +76,7 @@ namespace Muzziq.Controllers
         {
             // TOOD zwróć listę dostępnych piosenek
             
-            return View();
+            return View(createRoomViewModel);
         }
 
         public IActionResult WaitForGameView()
@@ -81,9 +86,13 @@ namespace Muzziq.Controllers
             return View();
         }
 
-        public IActionResult CreateRoom()
+        [HttpPost]
+        public IActionResult CreateRoom(String name, int[] songIds)
         {
             // TODO przechwycenie danych z formularza - nazwa pokoju, wybrane utwory
+            Match match = new Match();
+            match.RoomName = name;
+            // mecz.Songs = db.findSongsByIds(songIds)
 
             // utworzenie gry
 

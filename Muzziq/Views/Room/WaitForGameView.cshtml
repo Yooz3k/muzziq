@@ -7,5 +7,5 @@
 <p>TODO podaj nazwę gry</p>
 <h3>Lista graczy:</h3>
 <p>TODO lista graczy</p>
-<a asp-area="" asp-controller="Match" asp-action="StartMatch">Start!</a>
+<input type="button" value="Start!" onclick="location.href='@Url.Action("StartMatch", "Match")'" />
 <p>	TODO opcja dostępna tylko dla admina</p>

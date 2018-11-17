@@ -1,25 +1,42 @@
-﻿
+﻿@model CreateRoomViewModel
 @{
-    ViewData["Title"] = "CreateRoom";
+	ViewBag.Title = "CreateRoom";
 }
 
-<h2>Tworzenie pokoju</h2>
-TODO podaj nazwę pokoju
-<br />
+<h2>Tworzenie nowego pokoju</h2>
+<form asp-controller="Room" asp-action="CreateRoom" method="post">
+	<h3>Podaj nazwę pokoju</h3>
+	<input name="name" class="form-control" />
 
-TODO pokaż listę utworów
-<br />
+	<h3>Wybierz utwory</h3>
+	<table class="table table-bordered table-responsive table-hover">
+		<tr>
+			<th>ID</th>
+			<th>Tytuł</th>
+			<th>Wykonawca</th>
+			<th>Album</th>
+			<th>Gatunek</th>
+			<th>Rok</th>
+			<th>Wybór</th>
+		</tr>
 
-TODO pozwalaj na wybór utworów
-<br />
+		@foreach (var song in Model.AvailableSongs)
+		{
+			<tr>
+				<td>@song.Id</td>
+				<td>@song.Title</td>
+				<td>@song.Author</td>
+				<td>@song.Album</td>
+				<td>@song.Genre</td>
+				<td>@song.Year</td>
+				<td>
+					<input type="checkbox" name="songIds" value="@song.Id">
+				</td>
+			</tr>
+		}
+	</table>
+	<button type="submit" class="btn btn-default" onclick="location.href='@Url.Action("CreateRoomView", "Room")'">Utwórz nowy pokój</button>
+</form>
 
-<a asp-area="" asp-controller="Room" asp-action="AddNewSong">Dodaj nowy utwór</a>
-
-<br />
-TODO otworzenie okna dodania nowego utworu i przesłanie go na serwer
-<br />
-
-<a asp-area="" asp-controller="Room" asp-action="CreateRoom">Utwórz pokój</a>
-<br />
-
-TODO przekazanie danych pokoju
+<h3>Nie znalazłeś utworu, którego szukasz?</h3>
+<button type="submit" class="btn btn-default"  onclick="location.href='@Url.Action("AddNewSong", "Room")'" >Dodaj nowy utwór</button>
