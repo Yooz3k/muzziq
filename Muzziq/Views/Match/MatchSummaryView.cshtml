@@ -1,25 +1,21 @@
-﻿@*
-    //TODO - jak przekazać klasę własnej encji?
-    @model Match
-*@
-
-@{
+﻿@{
     ViewData["Title"] = "Podsumowanie meczu";
+    Match match = ViewBag.Match;
 }
 
 <h2>@ViewData["Title"]</h2>
-TODO nazwa pokoju: @*@Model.RoomName*@
-<br />
+
+<h4>Pokój <i>@match.RoomName</i></h4>
 
 <h3>Zająłeś 4 miejsce!</h3>
 TODO informacja o zajętym miejscu
 <br />
 
 <h3>Wyniki</h3>
-TODO tablica wyników
+@await Html.PartialAsync("_ResultsTable.cshtml")
 <br />
 
-kliknij, by powrócić do listy pokoi
+Kliknij, by powrócić do listy pokoi:
 <br />
 
 <input type="button" value="Lista pokoi" onclick="location.href='@Url.Action("ChooseRoomView", "Room")'" />
