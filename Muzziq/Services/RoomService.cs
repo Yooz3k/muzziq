@@ -10,8 +10,14 @@ namespace Muzziq.Services
 {
     public class RoomService
     {
-        private MatchService matchService = new MatchService();
+        private MatchService matchService;
+        private readonly ApplicationDbContext _context;
 
+        public RoomService(ApplicationDbContext context)
+        {
+            _context = context;
+            matchService = new MatchService(_context);
+        }
         public Room CreateRoom(Room room, ApplicationDbContext _context)
         {
             Room updatedRoom = room;
