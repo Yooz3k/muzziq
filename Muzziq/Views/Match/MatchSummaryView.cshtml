@@ -1,10 +1,14 @@
-﻿
+﻿@*
+    //TODO - jak przekazać klasę własnej encji?
+    @model Match
+*@
+
 @{
-    ViewData["Title"] = "MatchSummary";
+    ViewData["Title"] = "Podsumowanie meczu";
 }
 
-<h2>Podsumowanie meczu</h2>
-TODO nazwa pokoju
+<h2>@ViewData["Title"]</h2>
+TODO nazwa pokoju: @*@Model.RoomName*@
 <br />
 
 <h3>Zająłeś 4 miejsce!</h3>
@@ -17,4 +21,7 @@ TODO tablica wyników
 
 kliknij, by powrócić do listy pokoi
 <br />
-<a asp-area="" asp-controller="Room" asp-action="ChooseRoomView">Lista pokoi</a>
+
+<input type="button" value="Lista pokoi" onclick="location.href='@Url.Action("ChooseRoomView", "Room")'" />
+       
+@*<a asp-area="" asp-controller="Room" asp-action="ChooseRoomView">Lista pokoi</a>*@
