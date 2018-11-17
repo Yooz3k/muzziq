@@ -1,0 +1,31 @@
+﻿@{
+    List<Room> rooms = ViewBag.Rooms;
+}
+
+<div>
+    <table class="table table-bordered table-responsive table-hover" width="200">
+        <thead>
+            <tr>
+                <td>
+                    Nazwa pokoju
+                </td>
+                <td>
+                    Gracze
+                </td>
+            </tr>
+        </thead>
+
+        @foreach (Room room in rooms)
+        {
+            <tr>
+                <td>
+                    @room.Name
+                </td>
+                <td>
+                    @room.Players.Count
+                </td>
+            </tr>
+            //TODO: button dołączenia do pokoju
+        }
+    </table>
+</div>

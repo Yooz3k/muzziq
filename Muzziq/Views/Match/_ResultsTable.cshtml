@@ -2,8 +2,7 @@
     int position = 0;
 
     Match match = ViewBag.Match;
-    List<Result> results = match.MatchResults;
-    results.Sort((p, q) => q.Points.CompareTo(p.Points));
+    match.MatchResults.Sort((p, q) => q.Points.CompareTo(p.Points));
 }
 
 <div>
