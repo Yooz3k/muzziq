@@ -4,19 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Muzziq.Data;
 using Muzziq.Models.Entities;
+using Muzziq.Services;
 
 namespace Muzziq.Controllers
 {
   
     public class RoomController : Controller
     {
-
         private List<Song> availableSongs;
         private List<Match> availableMatches;
 
-        public RoomController()
+        private readonly RoomService roomService;
+
+        private readonly ApplicationDbContext _context;
+        public RoomController(ApplicationDbContext context)
         {
+            _context = context;
+            roomService = new RoomService(_context);
+
             availableSongs = new List<Song>();
             availableMatches = new List<Match>();
 
