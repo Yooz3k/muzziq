@@ -71,7 +71,7 @@ namespace Muzziq.Controllers
             res2.Player = player2;
             res2.Points = 444;
             res3.Player = player3;
-            res3.Points = 404;
+            res3.Points = 450;
 
             results.Add(res1);
             results.Add(res2);

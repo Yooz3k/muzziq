@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Muzziq.Data;
+using Muzziq.Models;
 using Muzziq.Models.Entities;
 using Muzziq.Services;
 
@@ -62,7 +63,26 @@ namespace Muzziq.Controllers
 
         public IActionResult ChooseRoomView()
         {
-            // TODO zwróć listę dostępnych pokoi
+            Room room1 = new Room();
+            room1.Name = "ekipa z zielonego jeepa";
+            room1.Players = new List<Player>();
+            room1.Players.Add(new Player(null, "1"));
+            room1.Players.Add(new Player(null, "2"));
+
+            Room room2 = new Room();
+            room2.Name = "weź pigułke";
+            room2.Players = new List<Player>();
+            room2.Players.Add(new Player(null, "3"));
+            room2.Players.Add(new Player(null, "4"));
+
+            List<Room> rooms = new List<Room>
+            {
+                room1,
+                room2
+            };
+
+            //ViewData["Rooms"] = _context.Rooms; <--- DOCELOWO TO MA BYĆ
+            ViewData["Rooms"] = rooms;
 
             return View();
         }
