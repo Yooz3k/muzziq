@@ -5,6 +5,10 @@ namespace Muzziq.Models.Entities
 {
     public class Match
     {
+        public Match()
+        {
+        }
+
         public Match(string roomName, int winnerId, DateTime endDate, List<Result> matchResults)
         {
             RoomName = roomName;
