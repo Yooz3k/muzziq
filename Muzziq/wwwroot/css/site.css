@@ -1,4 +1,47 @@
-﻿body {
+﻿/* własne */
+
+body {
+	background-color: #231f20;
+	--green-color: #72bb53;
+	--yellow-color: #ebbe43;
+}
+
+.navbar {
+	background-color: #72bb53;
+}
+
+.menu-element {
+	color: black !important;
+}
+
+a:hover, a:visited, a:active, a:link {
+	color: black !important;
+}
+
+h1 {
+	color: var(--green-color);
+	font-size: 34px;
+	font-weight: bold;
+}
+
+h2 {
+	color: var(--yellow-color);
+	font-weight: bold;
+	font-size: 30px;
+}
+
+h3 {
+	color: var(--green-color);
+	font-size: 25px;
+}
+
+h4 {
+	font-size: 22px;
+}
+
+/* zapewnione przez szablon */
+
+body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -6,8 +49,10 @@
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+	padding-left: 15px;
+	padding-right: 15px;
+	background-color: #ebebeb;
+	min-height: 90vh !important;
 }
 
 /* Carousel */
