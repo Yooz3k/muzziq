@@ -265,7 +265,8 @@ namespace Muzziq.Services
 
         public Match CreateMatch(string roomName, ApplicationDbContext _context)
         {
-            return new Match(roomName, 0, DateTime.Now, new List<Result>());
+            //TODO zamienić DateTime.Now na coś z sensem, a najlepiej zamienić w Match endTime na startTime xD
+            return _context.Add(new Match(roomName, -1, DateTime.Now, new List<Result>())).Entity;
         }
     }
 }
