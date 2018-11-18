@@ -5,6 +5,10 @@ namespace Muzziq.Models.Entities
 {
     public class Player
     {
+        public Player()
+        {
+        }
+
         public Player(ApplicationUser user, string nickname)
         {
             User = user;

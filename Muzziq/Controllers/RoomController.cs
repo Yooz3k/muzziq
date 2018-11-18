@@ -110,13 +110,10 @@ namespace Muzziq.Controllers
         public IActionResult CreateRoom(String name, int[] songIds)
         {
             // TODO przechwycenie danych z formularza - nazwa pokoju, wybrane utwory
-            Match match = new Match();
-            match.RoomName = name;
-            // mecz.Songs = db.findSongsByIds(songIds)
-
-            // utworzenie gry
-
-            // nadaj uprawnienia admina użytkownikowi
+            // ownerId też musi być przekazywany z frontu (po stworzeniu formularza do tworzenia graczy i ich poprawnego logowania)
+            // ownerId to będzie ten co kliknął przycisk "Utwórz pokój"
+            int ownerId = 1;
+            roomService.CreateRoom(ownerId, name, songIds, _context);
 
             // przekierowanie do WaitForGameView()
 

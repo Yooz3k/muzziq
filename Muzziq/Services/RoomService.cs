@@ -18,23 +18,25 @@ namespace Muzziq.Services
             _context = context;
             matchService = new MatchService(_context);
         }
-        public Room CreateRoom(Room room, ApplicationDbContext _context)
+        public void CreateRoom(int ownerId, String name, int[] songIds, ApplicationDbContext _context)
         {
-            Room updatedRoom = room;
-            // TODO ustawianie właściciela pokoju
-            // var userId = User.Identity.Name; // email
+            Room room = new Room();
 
+            // TODO
             // docelowo pobranie ownera z bazy jako Playera, który wykonał akcję
-            Player moderator = new Player(new ApplicationUser(), "Jakiskoles");
-            List<Player> players = new List<Player> { moderator };
+            Player owner = new Player(new ApplicationUser(), "Jakiskoles");
+            //Player owner = _context.Players.Find(ownerId);
 
-            Match match = matchService.CreateMatch(updatedRoom.Name, _context);
+            List<Player> players = new List<Player> { owner };
+
+            Match match = matchService.CreateMatch(name, _context);
             List<Match> matches = new List<Match> { match };
 
-            updatedRoom.Players = players;
-            updatedRoom.Matches = matches;
-            //updatedRoom.OwnerId = ownerId;
-            return updatedRoom;
+            room.Players = players;
+            room.Matches = matches;
+            room.OwnerId = ownerId;
+
+            _context.Add(room);
         }
 
         public void JoinRoom(Room room, Player player, ApplicationDbContext _context)
