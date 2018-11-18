@@ -39,8 +39,11 @@ namespace Muzziq.Services
             _context.Add(room);
         }
 
-        public void JoinRoom(Room room, Player player, ApplicationDbContext _context)
+        public void JoinRoom(int roomId, int playerId, ApplicationDbContext _context)
         {
+            Room room = _context.Rooms.Find(roomId);
+            Player player = _context.Players.Find(playerId);
+
             room.Players.Add(player);
             _context.Update(room);
         }

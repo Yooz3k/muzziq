@@ -133,10 +133,10 @@ namespace Muzziq.Controllers
 
         public IActionResult JoinRoom()
         {
-            // TODO przechwycenie ID pokoju
-
-            // dołączenie do pokoju
-
+            // TODO przechwycenie ID pokoju i id gracza
+            int playerId = 1;
+            int roomId = 2;
+            roomService.JoinRoom(roomId, playerId, _context);
             // przekierowanie do pokoju
 
             return View("WaitForGameView");
