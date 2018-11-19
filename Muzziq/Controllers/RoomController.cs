@@ -19,6 +19,7 @@ namespace Muzziq.Controllers
         private List<Song> availableSongs;
         private List<Match> availableMatches;
         private CreateRoomViewModel createRoomViewModel;
+        private WaitForGameModel waitForGameModel;
 
         private readonly RoomService roomService;
 
@@ -99,25 +100,41 @@ namespace Muzziq.Controllers
             return View(createRoomViewModel);
         }
 
-        public IActionResult WaitForGameView()
+        public IActionResult WaitForGameView(Room room)
         {
             // TODO zwróć nazwę pokoju oraz listę graczy
+            
+            
+            waitForGameModel = new WaitForGameModel(room.Name, room.Players);
 
-            return View();
+            return View(waitForGameModel);
         }
 
         [HttpPost]
         public IActionResult CreateRoom(String name, int[] songIds)
         {
+
             // TODO przechwycenie danych z formularza - nazwa pokoju, wybrane utwory
             // ownerId też musi być przekazywany z frontu (po stworzeniu formularza do tworzenia graczy i ich poprawnego logowania)
             // ownerId to będzie ten co kliknął przycisk "Utwórz pokój"
-            int ownerId = 1;
-            roomService.CreateRoom(ownerId, name, songIds, _context);
 
+            //jak już będzie się dało po ludzku dolączyć do gry to trzeba będzie co nieco pozmieniać tutaj
+            Room[] room = _context.Rooms.Where(x => x.Name == name).ToArray();
+
+            if(room[0] != null) //to taki mock, jeżeli wpiszesz to samo id to dołączasz do pokoju
+                room[0] = roomService.CreateRoom(1, name, songIds, _context);
+
+            List<Player> players = _context.Players.ToList();
+            players.Sort();
+            Player player2 = players.Last();
+            Player player = new Player(new ApplicationUser(), "User" + (player2.Id + 1).ToString());
+            _context.Add(player);
+            players.Add(player);
+            room[0].Players = players;
+            room[0] = _context.Update(room[0]).Entity;
             // przekierowanie do WaitForGameView()
 
-            return View("WaitForGameView");
+            return View("WaitForGameView", room);
         }
 
         public IActionResult AddNewSong()

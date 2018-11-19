@@ -18,7 +18,7 @@ namespace Muzziq.Services
             _context = context;
             matchService = new MatchService(_context);
         }
-        public void CreateRoom(int ownerId, String name, int[] songIds, ApplicationDbContext _context)
+        public Room CreateRoom(int ownerId, String name, int[] songIds, ApplicationDbContext _context)
         {
             Room room = new Room();
 
@@ -36,7 +36,7 @@ namespace Muzziq.Services
             room.Matches = matches;
             room.OwnerId = ownerId;
 
-            _context.Add(room);
+            return _context.Add(room).Entity;
         }
 
         public void JoinRoom(int roomId, int playerId, ApplicationDbContext _context)

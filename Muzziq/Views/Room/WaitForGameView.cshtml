@@ -1,11 +1,21 @@
-﻿
+﻿@model WaitForGameModel
 @{
-	ViewData["Title"] = "WaitForGamePlayer";
+    ViewData["Title"] = "WaitForGamePlayer";
 }
 
 <h2>Oczekiwanie na grę</h2>
 <p>TODO podaj nazwę gry</p>
 <h3>Lista graczy:</h3>
+<table>
+    @foreach (Player player in Model.Players)
+    {
+        <tr>
+            <td>
+                @player.Nickname
+            </td>
+        </tr>
+    }
+</table>
 <p>TODO lista graczy</p>
 <input type="button" value="Start!" onclick="location.href='@Url.Action("StartMatch", "Match")'" />
 <p>	TODO opcja dostępna tylko dla admina</p>
