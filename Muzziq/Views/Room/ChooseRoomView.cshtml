@@ -1,9 +1,9 @@
 ﻿@{
-    ViewData["Title"] = "ChooseRoom";
+    ViewData["Title"] = "Wybór pokoju";
     List<Room> rooms = ViewBag.Rooms;
 }
 
-<h2>Wybór pokoju</h2>
+<h2>@ViewData["Title"]</h2>
 @await Html.PartialAsync("_RoomsTable.cshtml")
 <h3>Nie lubisz graczy w tych pokojach?</h3>
 <input type="button" value="Utwórz własny pokój" onclick="location.href='@Url.Action("CreateRoomView", "Room")'" />

@@ -19,6 +19,7 @@ namespace Muzziq.Controllers
         private List<Song> availableSongs;
         private List<Match> availableMatches;
         private CreateRoomViewModel createRoomViewModel;
+        private List<Room> roomsTest;
 
         private readonly IRoomService _roomService;
 
@@ -62,12 +63,7 @@ namespace Muzziq.Controllers
             availableMatches.Add(match2);
 
             createRoomViewModel = new CreateRoomViewModel(availableSongs);
-        }
 
-       
-
-        public IActionResult ChooseRoomView()
-        {
             Room room1 = new Room();
             room1.Name = "ekipa z zielonego jeepa";
             room1.Players = new List<Player>();
@@ -80,14 +76,21 @@ namespace Muzziq.Controllers
             room2.Players.Add(new Player(null, "3"));
             room2.Players.Add(new Player(null, "4"));
 
-            List<Room> rooms = new List<Room>
+            roomsTest = new List<Room>
             {
                 room1,
                 room2
             };
+        }
+
+       
+
+        public IActionResult ChooseRoomView()
+        {
+            
 
             //ViewData["Rooms"] = _context.Rooms; <--- DOCELOWO TO MA BYĆ
-            ViewData["Rooms"] = rooms;
+            ViewData["Rooms"] = roomsTest;
 
             return View();
         }
@@ -138,6 +141,8 @@ namespace Muzziq.Controllers
             int roomId = 2;
             _roomService.JoinRoom(roomId, playerId);
             // przekierowanie do pokoju
+
+            //ViewData["Room"] = roomsTest.ElementAt(0);
 
             return View("WaitForGameView");
         }
