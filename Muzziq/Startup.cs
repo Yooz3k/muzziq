@@ -40,6 +40,7 @@ namespace Muzziq
             services.AddTransient<IPlayerService, PlayerService>();
             services.AddTransient<IMatchService, MatchService>();
             services.AddTransient<IRoomService, RoomService>();
+            services.AddTransient<ISongService, SongService>();
 
             services.AddMvc();
         }
