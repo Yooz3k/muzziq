@@ -37,6 +37,9 @@ namespace Muzziq
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IPlayerService, PlayerService>();
+            services.AddTransient<IMatchService, MatchService>();
+            services.AddTransient<IRoomService, RoomService>();
 
             services.AddMvc();
         }

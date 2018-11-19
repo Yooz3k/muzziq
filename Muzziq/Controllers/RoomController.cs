@@ -20,13 +20,13 @@ namespace Muzziq.Controllers
         private List<Match> availableMatches;
         private CreateRoomViewModel createRoomViewModel;
 
-        private readonly RoomService roomService;
+        private readonly IRoomService _roomService;
 
         private readonly ApplicationDbContext _context;
-        public RoomController(ApplicationDbContext context)
+        public RoomController(ApplicationDbContext context, IRoomService roomService)
         {
             _context = context;
-            roomService = new RoomService(_context);
+            _roomService = roomService;
 
             availableSongs = new List<Song>();
             availableMatches = new List<Match>();
@@ -113,7 +113,7 @@ namespace Muzziq.Controllers
             // ownerId też musi być przekazywany z frontu (po stworzeniu formularza do tworzenia graczy i ich poprawnego logowania)
             // ownerId to będzie ten co kliknął przycisk "Utwórz pokój"
             int ownerId = 1;
-            roomService.CreateRoom(ownerId, name, songIds, _context);
+            _roomService.CreateRoom(ownerId, name, songIds);
 
             // przekierowanie do WaitForGameView()
 
@@ -136,7 +136,7 @@ namespace Muzziq.Controllers
             // TODO przechwycenie ID pokoju i id gracza
             int playerId = 1;
             int roomId = 2;
-            roomService.JoinRoom(roomId, playerId, _context);
+            _roomService.JoinRoom(roomId, playerId);
             // przekierowanie do pokoju
 
             return View("WaitForGameView");
