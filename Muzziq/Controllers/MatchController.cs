@@ -27,11 +27,12 @@ namespace Muzziq.Controllers
             return View();
         }
 
+        // TODO przekazanie w parametrze id meczu
         public IActionResult StartMatch()
         {
             // TODO przechwycenie, jaki mecz jest tworzony
-            // matchService.CreateMatch("Pokoj zwierzeń", _context);
-            matchService.StartMatch();
+            //Match match = matchService.CreateMatch(1, null, 2);
+            matchService.StartMatch(1);
             // utworzenie meczu
 
             // rozgrywka
@@ -42,9 +43,11 @@ namespace Muzziq.Controllers
             return View("MatchView");
         }
 
+        // nie wiem czy ten punkt wejscia będzie potrzebny docelowo
+        // mecz się kończy z ostatnim pytaniem i to wystarczy chyba
         public IActionResult EndMatch()
         {
-            matchService.EndMatch();
+            //matchService.EndMatch(_context.Matches.Find(1));
             // TODO zapisanie rozgrywki
 
             // TODO zwrócenie listy wyników
@@ -58,7 +61,7 @@ namespace Muzziq.Controllers
         private Match prepareTestData()
         {
             Match sampleMatch = new Match();
-            sampleMatch.RoomName = "piwnica";
+            sampleMatch.RoomId = 5;
 
             List<Result> results = new List<Result>();
             Player player1 = new Player(null, "jolka");
@@ -80,7 +83,7 @@ namespace Muzziq.Controllers
             results.Add(res2);
             results.Add(res3);
 
-            sampleMatch.MatchResults = results;
+            sampleMatch.Results = results;
 
             return sampleMatch;
         }

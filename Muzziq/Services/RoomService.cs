@@ -27,21 +27,21 @@ namespace Muzziq.Services
         {
             var room = new Room();
 
-            // TODO
-            // docelowo pobranie ownera z bazy jako Playera, który wykonał akcję
-            var owner = new Player(new ApplicationUser(), "Jakiskoles");
-            //Player owner = _context.Players.Find(ownerId);
+            List<Song> songs = new List<Song>();
+            foreach (int songId in songIds)
+            {
+                songs.Add(_context.Songs.Find(songId));
+            }
 
+            var owner = _context.Players.Find(ownerId);
             var players = new List<Player> { owner };
 
-            var match = _matchService.CreateMatch(name, _context);
-            var matches = new List<Match> { match };
-
             room.Players = players;
-            room.Matches = matches;
+            room.Matches = new List<Match>();
             room.OwnerId = ownerId;
 
-            _context.Add(room);
+            _context.Rooms.Add(room);
+            _context.SaveChanges();
         }
 
         public void JoinRoom(int roomId, int playerId)
@@ -51,12 +51,14 @@ namespace Muzziq.Services
 
             room.Players.Add(player);
             _context.Update(room);
+            _context.SaveChanges();
         }
 
         public void LeaveRoom(Room room, Player player)
         {
             room.Players.Remove(player);
             _context.Update(room);
+            _context.SaveChanges();
         }
     }
 }
