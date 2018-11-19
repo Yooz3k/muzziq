@@ -36,6 +36,9 @@ namespace Muzziq.Controllers
 
             // rozgrywka
 
+            Match match = prepareTestData();
+            ViewData["Match"] = match;
+
             return View("MatchView");
         }
 

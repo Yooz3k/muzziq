@@ -1,5 +1,7 @@
 ﻿@{
     List<Room> rooms = ViewBag.Rooms;
+
+    int roomCapacity = 6; //TODO: to powinno być gdzieś wyżej deklarowane
 }
 
 <div>
@@ -24,8 +26,17 @@
                 <td>
                     @room.Players.Count
                 </td>
+                <td>
+                    @if (@room.Players.Count < @roomCapacity)
+                    {
+                    <input type="button" value="Dołącz" onclick="location.href='@Url.Action("JoinRoom", "Room")'" />
+                    }
+                    else
+                    {
+                    <input type="button" value="Pokój pełny" disabled />
+                    }
+                </td>
             </tr>
-            //TODO: button dołączenia do pokoju
         }
     </table>
 </div>

@@ -1,11 +1,14 @@
-﻿
-@{
-	ViewData["Title"] = "WaitForGamePlayer";
+﻿@{
+    ViewData["Title"] = "Oczekiwanie na grę";
+    Room room = ViewBag.Room;
 }
 
-<h2>Oczekiwanie na grę</h2>
-<p>TODO podaj nazwę gry</p>
+<h2>@ViewData["Title"]</h2>
+<p>@room.Name</p>
 <h3>Lista graczy:</h3>
-<p>TODO lista graczy</p>
+@await Html.PartialAsync("_PlayersTable.cshtml")
+
+@*@if (bieżącyplayer.Roles.contains("Admin"))
+    {*@
 <input type="button" value="Start!" onclick="location.href='@Url.Action("StartMatch", "Match")'" />
-<p>	TODO opcja dostępna tylko dla admina</p>
+@*}*@

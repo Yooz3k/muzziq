@@ -28,6 +28,6 @@ namespace Muzziq.Data
         public DbSet<Song> Songs { get; set; }
         public DbSet<Match> Matches { get; set; }
         public DbSet<Result> Results { get; set; }
-        public DbSet<Room> Rooms { get; set; }
+        public DbSet<Room> Room { get; set; }
     }
 }

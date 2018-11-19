@@ -46,7 +46,7 @@ namespace Muzziq.Services
 
         public void JoinRoom(int roomId, int playerId)
         {
-            var room = _context.Rooms.Find(roomId);
+            var room = _context.Room.Find(roomId);
             var player = _context.Players.Find(playerId);
 
             room.Players.Add(player);
