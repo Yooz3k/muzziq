@@ -52,11 +52,11 @@ namespace Muzziq.Controllers
 
             Match match1 = new Match();
             match1.Id = 1;
-            match1.RoomName = "Pieniężnianie";
+            match1.RoomId = 2;
 
             Match match2 = new Match();
             match2.Id = 2;
-            match2.RoomName = "JOLKA ONLY";
+            match2.RoomId = 3;
 
             availableMatches.Add(match1);
             availableMatches.Add(match2);

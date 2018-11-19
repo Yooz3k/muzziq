@@ -9,18 +9,18 @@ namespace Muzziq.Models.Entities
         {
         }
 
-        public Match(string roomName, int winnerId, DateTime endDate, List<Result> matchResults)
-        {
-            RoomName = roomName;
-            WinnerId = winnerId;
-            EndDate = endDate;
-            MatchResults = matchResults;
-        }
 
         public int Id { get; set; }
-        public string RoomName { get; set; }
+        public int RoomId { get; set; }
         public int WinnerId { get; set; }
-        public DateTime EndDate { get; set; }
-        public List<Result> MatchResults { get; set; }
+        public DateTime StartDate { get; set; }
+        public List<Song> Songs { get; set; }
+        public List<Result> Results { get; set; }
+        public string Question { get; set; }
+        public Answer CorrectAnswer { get; set; }
+        public List<Answer> WrongAnswers { get; set; }
+        public int TotalRoundsCount { get; set; }
+        public int CurrentRoundNumber { get; set; }
+
     }
 }
