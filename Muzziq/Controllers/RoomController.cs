@@ -27,7 +27,7 @@ namespace Muzziq.Controllers
         public RoomController(ApplicationDbContext context)
         {
             _context = context;
-            roomService = new RoomService(_context);
+            roomService = new RoomService(_context, new MatchService(_context));
 
             availableSongs = new List<Song>();
             availableMatches = new List<Match>();
@@ -87,8 +87,10 @@ namespace Muzziq.Controllers
                 room2
             };
 
-            //ViewData["Rooms"] = _context.Rooms; <--- DOCELOWO TO MA BYĆ
+            rooms = _context.Room.ToList();
+            rooms.ForEach((room) => _context.Entry(room).Collection(s => s.Players).Load());
             ViewData["Rooms"] = rooms;
+            //ViewData["Rooms"] = rooms; ^--- DOCELOWO TO MA BYĆ
 
             return View();
         }
@@ -100,14 +102,13 @@ namespace Muzziq.Controllers
             return View(createRoomViewModel);
         }
 
-        public IActionResult WaitForGameView(Room room)
+        public IActionResult WaitForGameView(int roomID)
         {
             // TODO zwróć nazwę pokoju oraz listę graczy
-            
-            
-            waitForGameModel = new WaitForGameModel(room.Name, room.Players);
+            Room room = _context.Room.Find(roomID);
+            _context.Entry(room).Collection(s => s.Players).Load();
 
-            return View(waitForGameModel);
+            return View(new WaitForGameModel(room.Name, room.Players));
         }
 
         [HttpPost]
@@ -118,23 +119,22 @@ namespace Muzziq.Controllers
             // ownerId też musi być przekazywany z frontu (po stworzeniu formularza do tworzenia graczy i ich poprawnego logowania)
             // ownerId to będzie ten co kliknął przycisk "Utwórz pokój"
 
-            //jak już będzie się dało po ludzku dolączyć do gry to trzeba będzie co nieco pozmieniać tutaj
-            Room[] room = _context.Rooms.Where(x => x.Name == name).ToArray();
-
-            if(room[0] != null) //to taki mock, jeżeli wpiszesz to samo id to dołączasz do pokoju
-                room[0] = roomService.CreateRoom(1, name, songIds, _context);
+            Room room = _context.Room.Where(x => x.Name == name).FirstOrDefault();
 
             List<Player> players = _context.Players.ToList();
-            players.Sort();
-            Player player2 = players.Last();
-            Player player = new Player(new ApplicationUser(), "User" + (player2.Id + 1).ToString());
+            players.Sort((ply1, ply2) => ply1.Id >= ply2.Id ? 1 : -1);
+            Player player2 = players.FirstOrDefault();
+            Player player = new Player(new ApplicationUser(), "User" + (player2?.Id + 1).ToString());
             _context.Add(player);
-            players.Add(player);
-            room[0].Players = players;
-            room[0] = _context.Update(room[0]).Entity;
-            // przekierowanie do WaitForGameView()
+            _context.SaveChanges();
+            if (room == null) //to taki mock, jeżeli wpiszesz to samo id to dołączasz do pokoju
+                room = roomService.CreateRoom(player.Id, name, songIds);
 
-            return View("WaitForGameView", room);
+            _context.SaveChanges();
+            return RedirectToAction("WaitForGameView", new
+            {
+                roomID = room.Id
+            });
         }
 
         public IActionResult AddNewSong()
@@ -148,15 +148,15 @@ namespace Muzziq.Controllers
             return null;
         }
 
-        public IActionResult JoinRoom()
+        public IActionResult JoinRoom(int roomId, int playerId)
         {
-            // TODO przechwycenie ID pokoju i id gracza
-            int playerId = 1;
-            int roomId = 2;
-            roomService.JoinRoom(roomId, playerId, _context);
-            // przekierowanie do pokoju
 
-            return View("WaitForGameView");
+            roomService.JoinRoom(roomId, playerId);
+
+            return RedirectToAction("WaitForGameView", new
+            {
+                roomID = roomId
+            });
         }
 
         public IActionResult Test()

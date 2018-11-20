@@ -10,7 +10,7 @@ namespace Muzziq.Models.RoomViewModels
     public class WaitForGameModel
     {
         public List<Player> Players { get; set; }
-        String MatchName;
+        public String MatchName;
 
         public WaitForGameModel(String matchName, List<Player> players)
         {
