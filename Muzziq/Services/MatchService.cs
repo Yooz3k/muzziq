@@ -8,7 +8,14 @@ using System.Threading.Tasks;
 
 namespace Muzziq.Services
 {
-    public class MatchService
+    public interface IMatchService
+    {
+        void StartMatch();
+        void EndMatch();
+        Match CreateMatch(string roomName, ApplicationDbContext _context);
+    }
+
+    public class MatchService : IMatchService
     {
         private readonly ApplicationDbContext _context;
 
@@ -196,6 +203,7 @@ namespace Muzziq.Services
             // TODO 
             // wyslanie piosenki do klientów (websocket)
             // Co jeśli któryś ma internet na korbkę i nie dostanie przed startem? ~ ŁK
+            // To wtedy ma problem, nie możemy wstrzymywać pozostałych, było dyskutowane na konsach ~MJ
         }
 
         private void DisplayQuestion(string question)

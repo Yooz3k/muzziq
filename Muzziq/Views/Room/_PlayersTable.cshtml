@@ -1,0 +1,29 @@
+﻿@{
+    Room room = ViewBag.Room;
+
+    int roomCapacity = 6; //TODO: zdefiniować gdzieś wyżej
+}
+
+<div>
+    <table class="table table-bordered table-responsive table-hover" width="200">
+        <thead>
+            <tr>
+                <td>
+                    Gracze
+                </td>
+            </tr>
+        </thead>
+
+        @foreach (Player player in room.Players)
+        {
+            <tr>
+                <td>
+                    @player.Nickname
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<div>
+    <p>Graczy: @room.Players.Count/@roomCapacity</p>
+</div>
