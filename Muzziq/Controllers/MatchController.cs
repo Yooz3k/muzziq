@@ -14,10 +14,10 @@ namespace Muzziq.Controllers
 
         private readonly MatchService matchService;
         private readonly ApplicationDbContext _context;
-        public MatchController(ApplicationDbContext context)
+        public MatchController(ApplicationDbContext context, IUtilsService utilsService)
         {
             _context = context;
-            matchService = new MatchService(_context);
+            matchService = new MatchService(_context, utilsService);
         }
 
         public IActionResult MatchView()

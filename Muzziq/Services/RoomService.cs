@@ -17,11 +17,13 @@ namespace Muzziq.Services
     {
         private readonly IMatchService _matchService;
         private readonly ApplicationDbContext _context;
+        private readonly IUtilsService _utilsService;
 
-        public RoomService(ApplicationDbContext context, IMatchService matchService)
+        public RoomService(ApplicationDbContext context, IMatchService matchService, IUtilsService utilsService)
         {
             _context = context;
             _matchService = matchService;
+            _utilsService = utilsService;
         }
         public void CreateRoom(int ownerId, String name, int[] songIds)
         {
@@ -30,10 +32,10 @@ namespace Muzziq.Services
             List<Song> songs = new List<Song>();
             foreach (int songId in songIds)
             {
-                songs.Add(_context.Songs.Find(songId));
+                songs.Add(_utilsService.GetSongById(songId));
             }
 
-            var owner = _context.Players.Find(ownerId);
+            var owner = _utilsService.GetPlayerById(ownerId);
             var players = new List<Player> { owner };
 
             room.Players = players;
@@ -46,8 +48,8 @@ namespace Muzziq.Services
 
         public void JoinRoom(int roomId, int playerId)
         {
-            var room = _context.Room.Find(roomId);
-            var player = _context.Players.Find(playerId);
+            var room = _utilsService.GetRoomById(roomId);
+            var player = _utilsService.GetPlayerById(playerId);
 
             room.Players.Add(player);
             _context.Update(room);
