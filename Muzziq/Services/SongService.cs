@@ -7,7 +7,6 @@ namespace Muzziq.Services
     public interface ISongService
     {
         void SaveSong(Song song);
-        Song GetSongById(int id);
     }
 
     public class SongService : ISongService
@@ -23,12 +22,6 @@ namespace Muzziq.Services
         {
             _context.Songs.Add(song);
             _context.SaveChanges();
-        }
-
-        public Song GetSongById(int id)
-        {
-            var song = _context.Songs.Find(id);
-            return song;
         }
     }
 }
