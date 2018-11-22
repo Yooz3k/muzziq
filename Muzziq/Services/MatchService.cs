@@ -54,7 +54,7 @@ namespace Muzziq.Services
         {
             // TODO 
             // przygotować Match do rozgrywki (poustawiać graczy czy coś)
-            var match = CreateMatch(16014, null, 5);
+            var match = CreateMatch(1, null, 5);
             //var match = _context.Matches.Find(matchId);
 
             StartRound(0, match);

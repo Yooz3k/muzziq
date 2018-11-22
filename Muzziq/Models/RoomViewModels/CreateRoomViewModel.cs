@@ -10,15 +10,5 @@ namespace Muzziq.Models.RoomViewModels
     public class CreateRoomViewModel
     {
         public List<Song> AvailableSongs { get; set; }
-   
-
-        public CreateRoomViewModel(List<Song> availableSongs)
-        {            
-            this.AvailableSongs = availableSongs;
-        }
-
-        public CreateRoomViewModel() {
-            this.AvailableSongs = new List<Song>();
-        }
     }
 }

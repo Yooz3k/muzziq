@@ -1,11 +1,8 @@
-﻿@{
-    ViewData["Title"] = "Podsumowanie meczu";
-    Match match = ViewBag.Match;
-}
+﻿@model Muzziq.Models.MatchViewModels.MatchSummaryViewModel
 
 <h2>@ViewData["Title"]</h2>
 
-<h4>Pokój <i>@match.RoomId</i></h4>
+<!-- <h4>Pokój <i>@*@Model.Match.RoomId*@</i></h4> --> 
 
 <h3>Zająłeś 4 miejsce!</h3>
 TODO informacja o zajętym miejscu

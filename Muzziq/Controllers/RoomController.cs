@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Muzziq.Data;
 using Muzziq.Models;
 using Muzziq.Models.Entities;
+using Muzziq.Models.MatchViewModels;
 using Muzziq.Models.RoomViewModels;
 using Muzziq.Services;
 
@@ -15,6 +16,7 @@ namespace Muzziq.Controllers
   
     public class RoomController : Controller
     {
+        private const int ROOM_CAPACITY = 6;
         // listy na potrzeby testów interfejsu, docelowo te obiekty nie będą trzymane w listach, ale w bazie danych
         private List<Song> availableSongs;
         private List<Match> availableMatches;
@@ -62,7 +64,10 @@ namespace Muzziq.Controllers
             availableMatches.Add(match1);
             availableMatches.Add(match2);
 
-            createRoomViewModel = new CreateRoomViewModel(availableSongs);
+            createRoomViewModel = new CreateRoomViewModel
+            {
+                AvailableSongs = availableSongs
+            };
 
             Room room1 = new Room();
             room1.Name = "ekipa z zielonego jeepa";
@@ -81,23 +86,23 @@ namespace Muzziq.Controllers
                 room1,
                 room2
             };
-        }
-
-       
+        }       
 
         public IActionResult ChooseRoomView()
         {
-            
+            ChooseRoomViewModel chooseRoomViewModel = new ChooseRoomViewModel
+            {
+                //Rooms = _context.Rooms.ToList();
+                Rooms = roomsTest,
+                RoomCapacity = ROOM_CAPACITY
+            };
 
-            //ViewData["Rooms"] = _context.Rooms; <--- DOCELOWO TO MA BYĆ
-            ViewData["Rooms"] = roomsTest;
-
-            return View();
+            return View(chooseRoomViewModel);
         }
 
         public IActionResult CreateRoomView()
         {
-            // TOOD zwróć listę dostępnych piosenek
+            // TODO zwróć listę dostępnych piosenek
             
             return View(createRoomViewModel);
         }
@@ -105,8 +110,14 @@ namespace Muzziq.Controllers
         public IActionResult WaitForGameView()
         {
             // TODO zwróć nazwę pokoju oraz listę graczy
+            WaitForGameViewModel waitForGameViewModel = new WaitForGameViewModel
+            {
+                //Room = _context.Room...;
+                Room = roomsTest[0], //TODO: przechwycenie id pokoju
+                RoomCapacity = ROOM_CAPACITY
+            };
 
-            return View();
+            return View(waitForGameViewModel);
         }
 
         [HttpPost]
@@ -118,9 +129,13 @@ namespace Muzziq.Controllers
             int ownerId = 1;
             _roomService.CreateRoom(ownerId, name, songIds);
 
-            // przekierowanie do WaitForGameView()
+            WaitForGameViewModel waitForGameViewModel = new WaitForGameViewModel
+            {
+                Room = roomsTest[0], //TODO: przechwycenie id pokoju
+                RoomCapacity = ROOM_CAPACITY
+            };
 
-            return View("WaitForGameView");
+            return View("WaitForGameView", waitForGameViewModel);
         }
 
         public IActionResult AddNewSong()
@@ -143,8 +158,13 @@ namespace Muzziq.Controllers
             // przekierowanie do pokoju
 
             //ViewData["Room"] = roomsTest.ElementAt(0);
+            WaitForGameViewModel waitForGameViewModel = new WaitForGameViewModel
+            {
+                Room = roomsTest[0],
+                RoomCapacity = ROOM_CAPACITY
+            };
 
-            return View("WaitForGameView");
+            return View("WaitForGameView", waitForGameViewModel);
         }
 
         public IActionResult Test()

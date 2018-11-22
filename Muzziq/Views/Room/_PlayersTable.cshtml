@@ -1,8 +1,4 @@
-﻿@{
-    Room room = ViewBag.Room;
-
-    int roomCapacity = 6; //TODO: zdefiniować gdzieś wyżej
-}
+﻿@model Muzziq.Models.RoomViewModels.WaitForGameViewModel
 
 <div>
     <table class="table table-bordered table-responsive table-hover" width="200">
@@ -14,7 +10,7 @@
             </tr>
         </thead>
 
-        @foreach (Player player in room.Players)
+        @foreach (Player player in Model.Room.Players)
         {
             <tr>
                 <td>
@@ -25,5 +21,5 @@
     </table>
 </div>
 <div>
-    <p>Graczy: @room.Players.Count/@roomCapacity</p>
+    <p>Graczy: @Model.Room.Players.Count/@Model.RoomCapacity</p>
 </div>
