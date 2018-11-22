@@ -1,8 +1,4 @@
-﻿@{
-    List<Room> rooms = ViewBag.Rooms;
-
-    int roomCapacity = 6; //TODO: to powinno być gdzieś wyżej deklarowane
-}
+﻿@model Muzziq.Models.MatchViewModels.ChooseRoomViewModel
 
 <div>
     <table class="table table-bordered table-responsive table-hover" width="200">
@@ -17,7 +13,7 @@
             </tr>
         </thead>
 
-        @foreach (Room room in rooms)
+        @foreach (Room room in Model.Rooms)
         {
             <tr>
                 <td>
@@ -27,13 +23,13 @@
                     @room.Players.Count
                 </td>
                 <td>
-                    @if (@room.Players.Count < @roomCapacity)
+                    @if (@room.Players.Count < Model.RoomCapacity)
                     {
-                    <input type="button" value="Dołącz" onclick="location.href='@Url.Action("JoinRoom", "Room")'" />
+                        <input type="button" value="Dołącz" onclick="location.href='@Url.Action("JoinRoom", "Room")'" />
                     }
                     else
                     {
-                    <input type="button" value="Pokój pełny" disabled />
+                        <input type="button" value="Pokój pełny" disabled />
                     }
                 </td>
             </tr>

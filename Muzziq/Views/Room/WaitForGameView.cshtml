@@ -1,10 +1,11 @@
-﻿@{
+﻿@model Muzziq.Models.RoomViewModels.WaitForGameViewModel
+
+@{
     ViewData["Title"] = "Oczekiwanie na grę";
-    Room room = ViewBag.Room;
 }
 
 <h2>@ViewData["Title"]</h2>
-<p>@room.Name</p>
+<p>@Model.Room.Name</p>
 <h3>Lista graczy:</h3>
 @await Html.PartialAsync("_PlayersTable.cshtml")
 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Muzziq.Data;
 using Muzziq.Models.Entities;
+using Muzziq.Models.MatchViewModels;
 using Muzziq.Services;
 
 namespace Muzziq.Controllers
@@ -23,8 +24,13 @@ namespace Muzziq.Controllers
         public IActionResult MatchView()
         {
             // TODO dużo rzeczy
+            MatchViewModel matchViewModel = new MatchViewModel
+            {
+                Match = _context.Matches.ToList()[0],
+                Room = _context.Rooms.ToList()[0]
+            };
 
-            return View();
+            return View(matchViewModel);
         }
 
         // TODO przekazanie w parametrze id meczu
@@ -37,10 +43,14 @@ namespace Muzziq.Controllers
 
             // rozgrywka
 
-            Match match = prepareTestData();
-            ViewData["Match"] = match;
+            //Match match = prepareTestData();
+            MatchViewModel matchViewModel = new MatchViewModel
+            {
+                Match = _context.Matches.ToList()[0],
+                Room = _context.Rooms.ToList()[0]
+            };
 
-            return View("MatchView");
+            return View("MatchView", matchViewModel);
         }
 
         // nie wiem czy ten punkt wejscia będzie potrzebny docelowo
@@ -53,9 +63,13 @@ namespace Muzziq.Controllers
             // TODO zwrócenie listy wyników
 
             Match match = prepareTestData();
-            ViewData["Match"] = match;
+            MatchSummaryViewModel matchSummaryViewModel = new MatchSummaryViewModel
+            {
+                Match = match
+                //Match = _context.Matches.ToList()[0]
+            };
 
-            return View("MatchSummaryView");
+            return View("MatchSummaryView", matchSummaryViewModel);
         }
 
         private Match prepareTestData()

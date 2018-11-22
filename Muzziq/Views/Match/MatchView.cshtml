@@ -1,10 +1,7 @@
-﻿@{
-	ViewData["Title"] = "Match";
-    Match match = ViewBag.Match;
-}
+﻿@model Muzziq.Models.MatchViewModels.MatchViewModel
 
 <h2>Trwa rozgrywka!</h2>
-@match.RoomId
+@Model.Room.Name
 <br />
 
 <h3>Wyniki:</h3>
