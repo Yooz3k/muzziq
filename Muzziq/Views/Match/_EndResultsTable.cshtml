@@ -1,8 +1,9 @@
-﻿@{ 
+﻿@model Muzziq.Models.MatchViewModels.MatchSummaryViewModel
+@{
     int position = 0;
 
-    Match match = ViewBag.Match;
-    match.MatchResults.Sort((p, q) => q.Points.CompareTo(p.Points));
+    //Match match = ViewBag.Match;
+    //match.MatchResults.Sort((p, q) => q.Points.CompareTo(p.Points));
 }
 
 <div>
@@ -21,7 +22,7 @@
             </tr>
         </thead>
 
-        @foreach (Result result in match.MatchResults)
+        @foreach (Result result in Model.Match.Results)
         {
             position++;
             <tr>

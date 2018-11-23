@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Muzziq.Data;
 using Muzziq.Models.Entities;
+using Muzziq.Models.MatchViewModels;
 using Muzziq.Services;
 
 namespace Muzziq.Controllers
@@ -14,51 +15,67 @@ namespace Muzziq.Controllers
 
         private readonly MatchService matchService;
         private readonly ApplicationDbContext _context;
-        public MatchController(ApplicationDbContext context)
+        public MatchController(ApplicationDbContext context, IUtilsService utilsService)
         {
             _context = context;
-            matchService = new MatchService(_context);
+            matchService = new MatchService(_context, utilsService);
         }
 
         public IActionResult MatchView()
         {
             // TODO dużo rzeczy
+            MatchViewModel matchViewModel = new MatchViewModel
+            {
+                Match = _context.Matches.ToList()[0],
+                Room = _context.Rooms.ToList()[0]
+            };
 
-            return View();
+            return View(matchViewModel);
         }
 
+        // TODO przekazanie w parametrze id meczu
         public IActionResult StartMatch()
         {
             // TODO przechwycenie, jaki mecz jest tworzony
-            // matchService.CreateMatch("Pokoj zwierzeń", _context);
-            matchService.StartMatch();
+            //Match match = matchService.CreateMatch(1, null, 2);
+            matchService.StartMatch(1);
             // utworzenie meczu
 
             // rozgrywka
 
-            Match match = prepareTestData();
-            ViewData["Match"] = match;
+            //Match match = prepareTestData();
+            MatchViewModel matchViewModel = new MatchViewModel
+            {
+                Match = _context.Matches.ToList()[0],
+                Room = _context.Rooms.ToList()[0]
+            };
 
-            return View("MatchView");
+            return View("MatchView", matchViewModel);
         }
 
+        // nie wiem czy ten punkt wejscia będzie potrzebny docelowo
+        // mecz się kończy z ostatnim pytaniem i to wystarczy chyba
         public IActionResult EndMatch()
         {
-            matchService.EndMatch();
+            //matchService.EndMatch(_context.Matches.Find(1));
             // TODO zapisanie rozgrywki
 
             // TODO zwrócenie listy wyników
 
             Match match = prepareTestData();
-            ViewData["Match"] = match;
+            MatchSummaryViewModel matchSummaryViewModel = new MatchSummaryViewModel
+            {
+                Match = match
+                //Match = _context.Matches.ToList()[0]
+            };
 
-            return View("MatchSummaryView");
+            return View("MatchSummaryView", matchSummaryViewModel);
         }
 
         private Match prepareTestData()
         {
             Match sampleMatch = new Match();
-            sampleMatch.RoomName = "piwnica";
+            sampleMatch.RoomId = 5;
 
             List<Result> results = new List<Result>();
             Player player1 = new Player(null, "jolka");
@@ -80,7 +97,7 @@ namespace Muzziq.Controllers
             results.Add(res2);
             results.Add(res3);
 
-            sampleMatch.MatchResults = results;
+            sampleMatch.Results = results;
 
             return sampleMatch;
         }

@@ -41,6 +41,7 @@ namespace Muzziq
             services.AddTransient<IMatchService, MatchService>();
             services.AddTransient<IRoomService, RoomService>();
             services.AddTransient<ISongService, SongService>();
+            services.AddTransient<IUtilsService, UtilsService>();
 
             services.AddMvc();
         }

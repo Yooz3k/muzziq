@@ -1,4 +1,5 @@
-﻿using Muzziq.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Muzziq.Data;
 using Muzziq.Models;
 using Muzziq.Models.Entities;
 using System;
@@ -10,99 +11,78 @@ namespace Muzziq.Services
 {
     public interface IMatchService
     {
-        void StartMatch();
-        void EndMatch();
-        Match CreateMatch(string roomName, ApplicationDbContext _context);
+        void StartMatch(int matchId);
+        void EndMatch(Match match);
+        Match CreateMatch(int roomId, List<Song> songs, int totalRoundsCount);
     }
 
     public class MatchService : IMatchService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUtilsService _utilsService;
 
-        public MatchService(ApplicationDbContext context)
+        public MatchService(ApplicationDbContext context, IUtilsService utilsService)
         {
             _context = context;
+            _utilsService = utilsService;
         }
-        public void StartMatch()
+
+        public Match CreateMatch(int roomId, List<Song> songs, int totalRoundsCount)
+        {
+            var room = _utilsService.GetRoomById(roomId);
+            var match = new Match();
+
+            var results = new List<Result>();
+            foreach (var player in room.Players)
+            {
+                results.Add(new Result(player, match, 0, 0));
+            }
+            match.CorrectAnswer = new Answer();
+            match.WrongAnswers = new List<Answer>();
+            match.Results = results;
+            match.Songs = GetAllSongsFromDatabase(); //TODO songs;
+            match.StartDate = DateTime.Now;
+            match.RoomId = roomId;
+            match.TotalRoundsCount = totalRoundsCount;
+
+            _context.Matches.Add(match);
+            _context.SaveChanges();
+            return match;
+        }
+
+        public void StartMatch(int matchId)
         {
             // TODO 
             // przygotować Match do rozgrywki (poustawiać graczy czy coś)
-            StartRound(0);
+            var match = CreateMatch(1, null, 5);
+            //var match = _context.Matches.Find(matchId);
 
+            StartRound(0, match);
         }
 
         // TODO
         // Runda 0 odbywa się przy naciśnięciu "StartMatch"
         // każda kolejna aż do maks zdefiniowanej przy tworzeniu rozgrywki będzie trafiać bezpośrednio tutaj
-        private void StartRound(int roundNumber)
+        private void StartRound(int roundNumber, Match match)
         {
-            Song song = GetRandomSong();
+            Song song = GetRandomSongFromList(match.Songs);
             SendSongToClients(song);
 
             Random rnd = new Random();
             int questionType = rnd.Next(5);
 
-            Tuple<string, string> questionAnswerTuple = GetRandomQuestionForSong(questionType, song);
-            String question = questionAnswerTuple.Item1;
-            String answer = questionAnswerTuple.Item2;
+            SetRandomQuestionForSong(match, questionType, song);
 
-            List<String> wrongAnswers = GetWrongAnswers(questionType, answer);
+            SetWrongAnswers(questionType, match);
 
             GetReadyToStart();
 
-            DisplayQuestion(question);
-            DisplayAnswers(answer, wrongAnswers);
+            DisplayQuestion(match.Question);
+            DisplayAnswers(match);
 
             StartPlayingSong(song.BinaryContent);
 
             StartCountingTimeToAnswer();
-
-            // async (czekaj na odpowiedzi graczy)
-            // przy poprawnej odpowiedzi ogłoszenie zwycięzcy i kolejna runda; przy błędzie zablokowanie gracza
-        }
-
-        private void DisplayAnswers(string correctAnswer, List<string> wrongAnswers)
-        {
-            // TODO 
-            // wyswietlić na froncie wszystkie odpowiedzi (websocket)
-            // w zasadzie nie wiem czy potrzebujemy w tym miejscu rozroznienia na poprawne i niepoprawne odpowiedzi
-            // ale jak juz jest to nie zaszkodzie
-        }
-
-        private List<string> GetWrongAnswers(int questionType, string correctAnswer)
-        {
-            // TODO 
-            // wygenerowac bledne odpowiedzi majace sens i niezawierajace poprawnej odpowiedzi
-
-            // Propozycja ~ŁK
-            // pobrać z bazy wszystkie piosenki i potem filtrować względem tytułu, autora itd
-            // wybrać z przefiltrowanych 3 losowe i je umieścić w liście
-
-            List<string> wrongAnswers = new List<string>();
-            List<Song> wrongAnswersSongs = GetRandomSongs(questionType, correctAnswer, 3);
-
-            foreach (Song song in wrongAnswersSongs)
-            {
-                switch (questionType)
-                {
-                    case 0:
-                        wrongAnswers.Add(song.Title);
-                        break;
-                    case 1:
-                        wrongAnswers.Add(song.Author);
-                        break;
-                    case 2:
-                        wrongAnswers.Add(song.Album);
-                        break;
-                    case 3:
-                        wrongAnswers.Add(song.Genre);
-                        break;
-                    case 4:
-                        wrongAnswers.Add(song.Year.ToString());
-                        break;
-                }
-            }
-            return wrongAnswers;
         }
 
         private List<Song> GetRandomSongs(int questionType, string correctAnswer, int songsCount)
@@ -144,12 +124,12 @@ namespace Muzziq.Services
         {
             //TODO 
             //Zamienić na faktycznie pobieranie z bazy!
+            // To jest tylko do tworzenia niepoprawnych odpowiedzi
             List<Song> songs = new List<Song>();
             Song song1 = new Song();
             song1.Album = "Discohłosta";
             song1.Author = "Waloszek";
             song1.Genre = "Disco Polo";
-            song1.Id = 1;
             song1.Title = "Wóda zryje banie";
             song1.Year = 2018;
 
@@ -157,7 +137,6 @@ namespace Muzziq.Services
             song2.Album = "Song 2";
             song2.Author = "Blur";
             song2.Genre = "Rock";
-            song2.Id = 2;
             song2.Title = "Song 2";
             song2.Year = 2000;
 
@@ -165,7 +144,6 @@ namespace Muzziq.Services
             song3.Album = "Song 3";
             song3.Author = "AUTH3";
             song3.Genre = "Rock3";
-            song3.Id = 3;
             song3.Title = "Song 3";
             song3.Year = 2011;
 
@@ -173,7 +151,6 @@ namespace Muzziq.Services
             song4.Album = "Song 4";
             song4.Author = "AUTH4";
             song4.Genre = "Rock4";
-            song4.Id = 4;
             song4.Title = "Song 4";
             song4.Year = 1996;
 
@@ -212,69 +189,164 @@ namespace Muzziq.Services
             // wysłać na front (websocket?)
         }
 
+        private void DisplayAnswers(Match match)
+        {
+            var correctAnswer = match.CorrectAnswer;
+            var wrongAnswers = match.WrongAnswers;
+            // TODO 
+            // wyswietlić na froncie wszystkie odpowiedzi (websocket)
+            // w zasadzie nie wiem czy potrzebujemy w tym miejscu rozroznienia na poprawne i niepoprawne odpowiedzi
+            // ale jak juz jest to nie zaszkodzie
+        }
+
         private void GetReadyToStart()
         {
             // TODO
             // odliczanie 5, 4, 3, 2, 1 do wyświetlenia pytania i puszczenia muzyki
         }
 
-        private Song GetRandomSong()
+        private Song GetRandomSongFromList(List<Song> songs)
         {
-            //TODO 
-            // pobranie piosenki z wcześniej zdefiniowany przy tworzeniu meczu
-            // (available songs w (RoomController))
-            Song song = new Song();
-            song.Album = "Discohłosta";
-            song.Author = "Waloszek";
-            song.Genre = "Disco Polo";
-            song.Id = 1;
-            song.Title = "Wóda zryje banie";
-            song.Year = 2018;
-
-            return song;
+            Random rnd = new Random();
+            int r = rnd.Next(songs.Count);
+            return songs[r];
         }
-        private Tuple<string, string> GetRandomQuestionForSong(int questionType, Song song)
+
+        private void SetRandomQuestionForSong(Match match, int questionType, Song song)
         {
-            string question = "";
-            string answer = "";
             switch (questionType)
             {
                 case 0:
-                    question = "Jaki tytuł nosi ten utwór?";
-                    answer = song.Title;
+                    match.Question = "Jaki tytuł nosi ten utwór?";
+                    match.CorrectAnswer.Content = song.Title;
                     break;
                 case 1:
-                    question = "Podaj autora tego utworu";
-                    answer = song.Author;
+                    match.Question = "Podaj autora tego utworu";
+                    match.CorrectAnswer.Content = song.Author;
                     break;
                 case 2:
-                    question = "Z jakiego albumu pochodzi ten utwór?";
-                    answer = song.Album;
+                    match.Question = "Z jakiego albumu pochodzi ten utwór?";
+                    match.CorrectAnswer.Content = song.Album;
                     break;
                 case 3:
-                    question = "Do jakiego gatunku muzycznego należy ten kawałek?";
-                    answer = song.Genre;
+                    match.Question = "Do jakiego gatunku muzycznego należy ten kawałek?";
+                    match.CorrectAnswer.Content = song.Genre;
                     break;
                 case 4:
-                    question = "W którym roku powstała ta piosenka?";
-                    answer = song.Year.ToString();
+                    match.Question = "W którym roku powstała ta piosenka?";
+                    match.CorrectAnswer.Content = song.Year.ToString();
                     break;
             }
-            return Tuple.Create(question, answer);
         }
 
-        public void EndMatch()
+        private void SetWrongAnswers(int questionType, Match match)
         {
+            List<Song> wrongAnswersSongs = GetRandomSongs(questionType, match.CorrectAnswer.Content, 3);
+
+            foreach (Song song in wrongAnswersSongs)
+            {
+                switch (questionType)
+                {
+                    case 0:
+                        match.WrongAnswers.Add(new Answer(song.Title));
+                        break;
+                    case 1:
+                        match.WrongAnswers.Add(new Answer(song.Author));
+                        break;
+                    case 2:
+                        match.WrongAnswers.Add(new Answer(song.Album));
+                        break;
+                    case 3:
+                        match.WrongAnswers.Add(new Answer(song.Genre));
+                        break;
+                    case 4:
+                        match.WrongAnswers.Add(new Answer(song.Year.ToString()));
+                        break;
+                }
+            }
+        }
+
+        public Boolean ParsePlayerAnswer(int matchId, int playerId, string playerAnswer)
+        {
+            var match = _utilsService.GetMatchById(matchId);
+            var player = _utilsService.GetPlayerById(playerId);
+            var playerWasCorrect = match.CorrectAnswer.Content == playerAnswer;
+            if (playerWasCorrect)
+            {
+                OnCorrectAnswer(match, player);
+            }
+            else
+            {
+                OnInCorrectAnswer(match, player);
+            }
+            return playerWasCorrect;
+        }
+
+        public void OnCorrectAnswer(Match match, Player player)
+        {
+            foreach (var result in match.Results)
+            {
+                if (result.Player.Id == player.Id)
+                {
+                    result.CorrectAnswersCount++;
+                    result.Points++; //TODO
+                    break;
+                }
+            }
+
+            EndRound(match);
+        }
+
+        public void OnInCorrectAnswer(Match match, Player player)
+        {
+            // TODO 
+            // wyłączyć możliwość ponownego odpowiadania gracza {player} (websocket)
+        }
+
+        public void EndMatch(Match match)
+        {
+            Player winner = GetSortetResultList(match.Results)[0].Player;
+            match.WinnerId = winner.Id;
+            _context.Update(match);
+            _context.SaveChanges();
+
             // TODO
-            // wyznacz zwycięzcę meczu
-            // pokaż ranking
+            // ogłoś zwycięzcę
             // zaproponuj kojeną rozgrywkę w ramach pokoju
         }
-
-        public Match CreateMatch(string roomName, ApplicationDbContext _context)
+        
+        private void UpdateRanking(List<Result> results)
         {
-            //TODO zamienić DateTime.Now na coś z sensem, a najlepiej zamienić w Match endTime na startTime xD
-            return _context.Add(new Match(roomName, -1, DateTime.Now, new List<Result>())).Entity;
+            List<Result> sortedResults = GetSortetResultList(results);
+            // kolejne zajęte miejsca w kolejnych miejscach listy 
+
+            // TODO
+            // wysłać na front
+        }
+
+        private List<Result> GetSortetResultList(List<Result> originalList)
+        {
+            List<Result> sortedResults = new List<Result>(originalList);
+            sortedResults.Sort((x, y) => x.Points.CompareTo(y.Points));
+            return sortedResults;
+        }
+
+        public void EndRound(Match match)
+        {
+            match.CurrentRoundNumber++;
+            _context.Update(match);
+            _context.SaveChanges();
+
+            UpdateRanking(match.Results);
+
+            if (match.CurrentRoundNumber == match.TotalRoundsCount)
+            {
+                EndMatch(match);
+            }
+            else
+            {
+                StartRound(match.CurrentRoundNumber, match);
+            }
         }
     }
 }
