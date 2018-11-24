@@ -19,7 +19,6 @@ namespace Muzziq.Controllers
         private List<Song> availableSongs;
         private List<Match> availableMatches;
         private CreateRoomViewModel createRoomViewModel;
-        private WaitForGameModel waitForGameModel;
 
         private readonly RoomService roomService;
 
@@ -27,7 +26,7 @@ namespace Muzziq.Controllers
         public RoomController(ApplicationDbContext context)
         {
             _context = context;
-            roomService = new RoomService(_context, new MatchService(_context));
+            roomService = new RoomService(_context, new MatchService(_context, new UtilsService(_context)), new UtilsService(_context));
 
             availableSongs = new List<Song>();
             availableMatches = new List<Match>();
@@ -53,11 +52,11 @@ namespace Muzziq.Controllers
 
             Match match1 = new Match();
             match1.Id = 1;
-            match1.RoomName = "Pieniężnianie";
+            //match1.RoomName = "Pieniężnianie";
 
             Match match2 = new Match();
             match2.Id = 2;
-            match2.RoomName = "JOLKA ONLY";
+            //match2.RoomName = "JOLKA ONLY";
 
             availableMatches.Add(match1);
             availableMatches.Add(match2);
@@ -87,7 +86,7 @@ namespace Muzziq.Controllers
                 room2
             };
 
-            rooms = _context.Room.ToList();
+            rooms = _context.Rooms.ToList();
             rooms.ForEach((room) => _context.Entry(room).Collection(s => s.Players).Load());
             ViewData["Rooms"] = rooms;
             //ViewData["Rooms"] = rooms; ^--- DOCELOWO TO MA BYĆ
@@ -105,10 +104,14 @@ namespace Muzziq.Controllers
         public IActionResult WaitForGameView(int roomID)
         {
             // TODO zwróć nazwę pokoju oraz listę graczy
-            Room room = _context.Room.Find(roomID);
-            _context.Entry(room).Collection(s => s.Players).Load();
+            Room room = _context.Rooms.Find(roomID);
+            if (room != null)
+            {
+                _context.Entry(room).Collection(s => s.Players).Load();
+            }
 
-            return View(new WaitForGameModel(room.Name, room.Players));
+
+            return View(new WaitForGameViewModel(room, 6)); 
         }
 
         [HttpPost]
@@ -119,10 +122,10 @@ namespace Muzziq.Controllers
             // ownerId też musi być przekazywany z frontu (po stworzeniu formularza do tworzenia graczy i ich poprawnego logowania)
             // ownerId to będzie ten co kliknął przycisk "Utwórz pokój"
 
-            Room room = _context.Room.Where(x => x.Name == name).FirstOrDefault();
+            Room room = _context.Rooms.Where(x => x.Name == name).FirstOrDefault();
 
             List<Player> players = _context.Players.ToList();
-            players.Sort((ply1, ply2) => ply1.Id >= ply2.Id ? 1 : -1);
+            players.Sort((ply1, ply2) => ply1.Id >= ply2.Id ? -1 : 1);
             Player player2 = players.FirstOrDefault();
             Player player = new Player(new ApplicationUser(), "User" + (player2?.Id + 1).ToString());
             _context.Add(player);

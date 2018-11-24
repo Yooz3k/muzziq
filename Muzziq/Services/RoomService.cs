@@ -8,7 +8,7 @@ namespace Muzziq.Services
 {
     public interface IRoomService
     {
-        void CreateRoom(int ownerId, String name, int[] songIds);
+        Room CreateRoom(int ownerId, String name, int[] songIds);
         void JoinRoom(int roomId, int playerId);
         void LeaveRoom(Room room, Player player);
     }
@@ -25,7 +25,7 @@ namespace Muzziq.Services
             _matchService = matchService;
             _utilsService = utilsService;
         }
-        public void CreateRoom(int ownerId, String name, int[] songIds)
+        public Room CreateRoom(int ownerId, String name, int[] songIds)
         {
             var room = new Room();
 
@@ -44,6 +44,7 @@ namespace Muzziq.Services
 
             _context.Rooms.Add(room);
             _context.SaveChanges();
+            return room;
         }
 
         public void JoinRoom(int roomId, int playerId)

@@ -12,14 +12,5 @@ namespace Muzziq.Models.RoomViewModels
         public List<Player> Players { get; set; }
         public String MatchName;
 
-        public WaitForGameModel(String matchName, List<Player> players)
-        {
-            this.MatchName = matchName;
-            this.Players = players;
-        }
-
-        public WaitForGameModel() {
-            this.Players = new List<Player>();
-        }
     }
 }

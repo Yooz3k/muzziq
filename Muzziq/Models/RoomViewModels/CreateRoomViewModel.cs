@@ -9,6 +9,10 @@ namespace Muzziq.Models.RoomViewModels
 {
     public class CreateRoomViewModel
     {
+        public CreateRoomViewModel(List<Song> avalialbeSongs)
+        {
+            AvailableSongs = avalialbeSongs;
+        }
         public List<Song> AvailableSongs { get; set; }
     }
 }
