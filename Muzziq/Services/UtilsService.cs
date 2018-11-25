@@ -48,9 +48,14 @@ namespace Muzziq.Services
         public int getPlayerByUserId(string userId)
         {
             //czy to dobre miejsce na tę metodę?
-            int playerId = 1; //docelowo równe wynikowi zapytania o id
+            //int playerId = 1; //docelowo równe wynikowi zapytania o id
             //TODO: wyszukanie id playera dla określonego id usera
-            return playerId;
+
+            Player player = _context.Players
+                .Where(p => p.User.Id.Equals(userId))
+                .FirstOrDefault();
+
+            return player.Id;
         }
     }
 }
