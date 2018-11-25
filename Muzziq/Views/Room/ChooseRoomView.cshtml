@@ -7,4 +7,4 @@
 <h2>@ViewData["Title"]</h2>
 @await Html.PartialAsync("_RoomsTable.cshtml")
 <h3>Nie lubisz graczy w tych pokojach?</h3>
-<input type="button" value="Utwórz własny pokój" onclick="location.href='@Url.Action("CreateRoomView", "Room")'" />
+<input type="button"  class="btn btn-default" value="Utwórz własny pokój" onclick="location.href='@Url.Action("CreateRoomView", "Room")'" />
