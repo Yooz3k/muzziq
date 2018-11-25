@@ -9,7 +9,7 @@
 <h3>Lista graczy:</h3>
 @await Html.PartialAsync("_PlayersTable.cshtml")
 
-@*@if (bieżącyplayer.Roles.contains("Admin"))
-    {*@
-<input type="button" value="Start!" onclick="location.href='@Url.Action("StartMatch", "Match", new { roomId = Model.Room.Id })'" />
-@*}*@
+@if (Model.OwnerId.Equals(Model.Room.OwnerId))
+{
+    <input type="button" value="Start!" onclick="location.href='@Url.Action("StartMatch", "Match", new { roomId = Model.Room.Id })'" />
+}
