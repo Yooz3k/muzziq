@@ -1,0 +1,34 @@
+﻿@model MatchViewModel
+
+<h3>Podpowiedzi</h3>
+TODO podpowiedzi
+
+<div id="timer_container">
+	<div class="timer_info">pozostało</div>
+	<div id="timer">
+	</div>
+	<div class="timer_info">do końca</div>
+</div>
+<script type="text/javascript">
+	timer(
+		20 * 1000, // milliseconds
+		function (timeleft) { // called every step to update the visible countdown
+			document.getElementById('timer').innerHTML = timeleft;
+		},
+		function () { // what to do after
+			alert("TODO nastepne pytanie!");
+		}
+	);
+
+	function timer(time, update, complete) {
+		var start = new Date().getTime();
+		var interval = setInterval(function () {
+			var now = time - (new Date().getTime() - start);
+			if (now <= 0) {
+				clearInterval(interval);
+				complete();
+			}
+			else update(Math.floor(now / 1000));
+		}, 100);
+	}
+</script>

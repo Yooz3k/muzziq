@@ -30,20 +30,10 @@ namespace Muzziq.Services
         public Match CreateMatch(int roomId, List<Song> songs, int totalRoundsCount)
         {
             var room = _utilsService.GetRoomById(roomId);
-            var match = new Match();
+            //TODO songs;
+            var match = new Match(room, GetAllSongsFromDatabase(), roomId, totalRoundsCount);
 
-            var results = new List<Result>();
-            foreach (var player in room.Players)
-            {
-                results.Add(new Result(player, match, 0, 0));
-            }
-            match.CorrectAnswer = new Answer();
-            match.WrongAnswers = new List<Answer>();
-            match.Results = results;
-            match.Songs = GetAllSongsFromDatabase(); //TODO songs;
-            match.StartDate = DateTime.Now;
-            match.RoomId = roomId;
-            match.TotalRoundsCount = totalRoundsCount;
+           
 
             _context.Matches.Add(match);
             _context.SaveChanges();
@@ -73,7 +63,8 @@ namespace Muzziq.Services
 
             SetRandomQuestionForSong(match, questionType, song);
 
-            SetWrongAnswers(questionType, match);
+            // TODO dodać poprawną odpowiedź do Answers
+            SetAnswers(questionType, match);
 
             GetReadyToStart();
 
@@ -192,7 +183,7 @@ namespace Muzziq.Services
         private void DisplayAnswers(Match match)
         {
             var correctAnswer = match.CorrectAnswer;
-            var wrongAnswers = match.WrongAnswers;
+            var answers = match.Answers;
             // TODO 
             // wyswietlić na froncie wszystkie odpowiedzi (websocket)
             // w zasadzie nie wiem czy potrzebujemy w tym miejscu rozroznienia na poprawne i niepoprawne odpowiedzi
@@ -239,28 +230,28 @@ namespace Muzziq.Services
             }
         }
 
-        private void SetWrongAnswers(int questionType, Match match)
+        private void SetAnswers(int questionType, Match match)
         {
-            List<Song> wrongAnswersSongs = GetRandomSongs(questionType, match.CorrectAnswer.Content, 3);
+            List<Song> answersSongs = GetRandomSongs(questionType, match.CorrectAnswer.Content, 3);
 
-            foreach (Song song in wrongAnswersSongs)
+            foreach (Song song in answersSongs)
             {
                 switch (questionType)
                 {
                     case 0:
-                        match.WrongAnswers.Add(new Answer(song.Title));
+                        match.Answers.Add(new Answer(song.Title));
                         break;
                     case 1:
-                        match.WrongAnswers.Add(new Answer(song.Author));
+                        match.Answers.Add(new Answer(song.Author));
                         break;
                     case 2:
-                        match.WrongAnswers.Add(new Answer(song.Album));
+                        match.Answers.Add(new Answer(song.Album));
                         break;
                     case 3:
-                        match.WrongAnswers.Add(new Answer(song.Genre));
+                        match.Answers.Add(new Answer(song.Genre));
                         break;
                     case 4:
-                        match.WrongAnswers.Add(new Answer(song.Year.ToString()));
+                        match.Answers.Add(new Answer(song.Year.ToString()));
                         break;
                 }
             }
