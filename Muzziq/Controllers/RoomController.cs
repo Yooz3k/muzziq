@@ -16,9 +16,8 @@ namespace Muzziq.Controllers
     public class RoomController : Controller
     {
         // listy na potrzeby testów interfejsu, docelowo te obiekty nie będą trzymane w listach, ale w bazie danych
-        private List<Song> availableSongs;
+        // piosenki już w bazie danych
         private List<Match> availableMatches;
-        private CreateRoomViewModel createRoomViewModel;
 
         private readonly RoomService roomService;
 
@@ -28,27 +27,7 @@ namespace Muzziq.Controllers
             _context = context;
             roomService = new RoomService(_context, new MatchService(_context, new UtilsService(_context)), new UtilsService(_context));
 
-            availableSongs = new List<Song>();
             availableMatches = new List<Match>();
-
-            Song song1 = new Song();
-            song1.Album = "Discohłosta";
-            song1.Author = "Waloszek";
-            song1.Genre = "Disco Polo";
-            song1.Id = 1;
-            song1.Title = "Wóda zryje banie";
-            song1.Year = 2018;
-
-            Song song2 = new Song();
-            song2.Album = "Song 2";
-            song2.Author = "Blur";
-            song2.Genre = "Rock";
-            song2.Id = 2;
-            song2.Title = "Song 2";
-            song2.Year = 2000;
-
-            availableSongs.Add(song1);
-            availableSongs.Add(song2);
 
             Match match1 = new Match();
             match1.Id = 1;
@@ -60,8 +39,6 @@ namespace Muzziq.Controllers
 
             availableMatches.Add(match1);
             availableMatches.Add(match2);
-
-            createRoomViewModel = new CreateRoomViewModel(availableSongs);
         }
 
        
@@ -97,8 +74,9 @@ namespace Muzziq.Controllers
         public IActionResult CreateRoomView()
         {
             // TOOD zwróć listę dostępnych piosenek
+            CreateRoomViewModel model = new CreateRoomViewModel(_context.Songs.ToList());
             
-            return View(createRoomViewModel);
+            return View(model);
         }
 
         public IActionResult WaitForGameView(int roomID)
