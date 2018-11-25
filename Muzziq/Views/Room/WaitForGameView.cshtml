@@ -11,5 +11,5 @@
 
 @*@if (bieżącyplayer.Roles.contains("Admin"))
     {*@
-<input type="button" value="Start!" onclick="location.href='@Url.Action("StartMatch", "Match")'" />
+<input type="button" value="Start!" onclick="location.href='@Url.Action("StartMatch", "Match", new { roomId = Model.Room.Id })'" />
 @*}*@

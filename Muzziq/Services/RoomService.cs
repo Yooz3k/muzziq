@@ -41,6 +41,7 @@ namespace Muzziq.Services
             room.Players = players;
             room.Matches = new List<Match>();
             room.OwnerId = ownerId;
+            room.Name = name;
 
             _context.Rooms.Add(room);
             _context.SaveChanges();
