@@ -42,7 +42,7 @@ namespace Muzziq.Controllers
 
             int matchId = 1;
             //Match match = matchService.CreateMatch(1, null, 2);
-            matchService.StartMatch(matchId);
+            matchService.StartMatch(roomId);
             // utworzenie meczu
 
             // rozgrywka
