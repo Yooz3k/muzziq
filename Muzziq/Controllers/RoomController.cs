@@ -85,10 +85,10 @@ namespace Muzziq.Controllers
                 room = roomService.CreateRoom(player.Id, name, songIds);
 
             _context.SaveChanges();
-            return RedirectToAction("WaitForGameView", new
-            {
-                roomID = room.Id
-            });
+
+            WaitForGameViewModel waitForGameView = new WaitForGameViewModel(room, 6, player.Id); //TODO: 6 powinno lecieć z góry
+
+            return View("WaitForGameView", waitForGameView);
         }
 
         public IActionResult AddNewSong()
@@ -106,10 +106,9 @@ namespace Muzziq.Controllers
         {
             roomService.JoinRoom(roomId, playerId);
 
-            return RedirectToAction("WaitForGameView", new
-            {
-                roomID = roomId
-            });
+            Room room = new UtilsService(_context).GetRoomById(roomId);
+
+            return View("WaitForGameView", new WaitForGameViewModel(room));
         }
 
         public IActionResult Test()

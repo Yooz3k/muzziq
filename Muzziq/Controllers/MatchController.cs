@@ -29,11 +29,10 @@ namespace Muzziq.Controllers
                 Match = _context.Matches.ToList()[0],
                 Room = _context.Rooms.ToList()[0]
             };
-
+            
             return View(matchViewModel);
         }
 
-        // TODO przekazanie w parametrze id meczu
         public IActionResult StartMatch(int roomId)
         {
             // TODO przechwycenie, jaki mecz jest tworzony
@@ -41,8 +40,9 @@ namespace Muzziq.Controllers
             // W widoku do tego momentu istnieje tylko kontekst pokoju, więc jest id pokoju, nie meczu.
             // To nie tak, że mecz jest tworzony dopiero teraz i z serwisu leci id? ~MJ
 
+            int matchId = 1;
             //Match match = matchService.CreateMatch(1, null, 2);
-            matchService.StartMatch(1);
+            matchService.StartMatch(roomId);
             // utworzenie meczu
 
             // rozgrywka
@@ -50,8 +50,9 @@ namespace Muzziq.Controllers
             //Match match = prepareTestData();
             MatchViewModel matchViewModel = new MatchViewModel
             {
-                Match = _context.Matches.ToList()[0],
-                Room = _context.Rooms.ToList()[0]
+                //Match = _context.Matches.ToList()[0],
+                Match = new UtilsService(_context).GetMatchById(matchId),
+                Room = new UtilsService(_context).GetRoomById(roomId)
             };
 
             return View("MatchView", matchViewModel);

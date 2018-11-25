@@ -40,11 +40,11 @@ namespace Muzziq.Services
             return match;
         }
 
-        public void StartMatch(int matchId)
+        public void StartMatch(int roomId)
         {
             // TODO 
             // przygotować Match do rozgrywki (poustawiać graczy czy coś)
-            var match = CreateMatch(1, null, 5);
+            var match = CreateMatch(roomId, null, 5);
             //var match = _context.Matches.Find(matchId);
 
             StartRound(0, match);
