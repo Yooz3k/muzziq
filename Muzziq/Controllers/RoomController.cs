@@ -21,13 +21,14 @@ namespace Muzziq.Controllers
         private CreateRoomViewModel createRoomViewModel;
 
         private readonly RoomService roomService;
+        private readonly WSService wsService;
 
         private readonly ApplicationDbContext _context;
         public RoomController(ApplicationDbContext context)
         {
             _context = context;
             roomService = new RoomService(_context, new MatchService(_context, new UtilsService(_context)), new UtilsService(_context));
-
+            wsService = new WSService(roomService, _context);
             availableSongs = new List<Song>();
             availableMatches = new List<Match>();
 
@@ -101,7 +102,7 @@ namespace Muzziq.Controllers
             return View(createRoomViewModel);
         }
 
-        public IActionResult WaitForGameView(int roomID)
+        public IActionResult WaitForGameView(int roomID, int playerID)
         {
             // TODO zwróć nazwę pokoju oraz listę graczy
             Room room = _context.Rooms.Find(roomID);
@@ -111,7 +112,7 @@ namespace Muzziq.Controllers
             }
 
 
-            return View(new WaitForGameViewModel(room, 6)); 
+            return View(new WaitForGameViewModel(room,6,playerID, roomID)); 
         }
 
         [HttpPost]
@@ -124,19 +125,19 @@ namespace Muzziq.Controllers
 
             Room room = _context.Rooms.Where(x => x.Name == name).FirstOrDefault();
 
-            List<Player> players = _context.Players.ToList();
-            players.Sort((ply1, ply2) => ply1.Id >= ply2.Id ? -1 : 1);
-            Player player2 = players.FirstOrDefault();
-            Player player = new Player(new ApplicationUser(), "User" + (player2?.Id + 1).ToString());
+            Player player = new Player(new ApplicationUser(), "User");
             _context.Add(player);
             _context.SaveChanges();
-            if (room == null) //to taki mock, jeżeli wpiszesz to samo id to dołączasz do pokoju
+            if (room == null) //to taki mock, jeżeli wpiszesz to samo id to , do pokoju
                 room = roomService.CreateRoom(player.Id, name, songIds);
 
+            player.Nickname = player.Nickname + player.Id.ToString();
+            _context.Update(player);
             _context.SaveChanges();
             return RedirectToAction("WaitForGameView", new
             {
-                roomID = room.Id
+                roomID = room.Id,
+                playerID = player.Id
             });
         }
 
@@ -153,12 +154,20 @@ namespace Muzziq.Controllers
 
         public IActionResult JoinRoom(int roomId, int playerId)
         {
-
-            roomService.JoinRoom(roomId, playerId);
-
+            //do testów bo na razie widoki nie zwracają id_playerów
+            Player player = new Player(new ApplicationUser(), "User");
+            _context.Add(player);
+            _context.SaveChanges();
+            roomService.JoinRoom(roomId, player.Id);
+            player.Nickname = player.Nickname + player.Id.ToString();
+            _context.Update(player);
+            _context.SaveChanges();
+            WSMessage message = new WSMessage(WSMessageType.PLAYER_JOIN, player.Id.ToString() + " " + player.Nickname);
+            wsService.SendToList(roomId, message);
             return RedirectToAction("WaitForGameView", new
             {
-                roomID = roomId
+                roomID = roomId,
+                playerID = player.Id
             });
         }
 

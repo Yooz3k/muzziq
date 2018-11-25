@@ -9,11 +9,14 @@ namespace Muzziq.Models.RoomViewModels
     {
         public Room Room { get; set; }
         public int RoomCapacity { get; set; }
-
-        public WaitForGameViewModel(Room room, int roomCapacity)
+        public int PlayerID { get; set; }
+        public int RoomID { get; set; }
+        public WaitForGameViewModel(Room room, int roomCapacity, int playerID, int roomID)
         {
             this.Room = room;
             this.RoomCapacity = roomCapacity;
+            this.PlayerID = playerID;
+            this.RoomID = roomID;
         }
     }
 }
