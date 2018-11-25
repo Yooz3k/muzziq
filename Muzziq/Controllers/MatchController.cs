@@ -12,7 +12,6 @@ namespace Muzziq.Controllers
 {
     public class MatchController : Controller
     {
-
         private readonly MatchService matchService;
         private readonly ApplicationDbContext _context;
         public MatchController(ApplicationDbContext context, IUtilsService utilsService)
@@ -24,6 +23,7 @@ namespace Muzziq.Controllers
         public IActionResult MatchView()
         {
             // TODO dużo rzeczy
+            // jakie rzeczy? jak logika to raczej w serwisie :P ~MJ
             MatchViewModel matchViewModel = new MatchViewModel
             {
                 Match = _context.Matches.ToList()[0],
@@ -34,9 +34,13 @@ namespace Muzziq.Controllers
         }
 
         // TODO przekazanie w parametrze id meczu
-        public IActionResult StartMatch()
+        public IActionResult StartMatch(int roomId)
         {
             // TODO przechwycenie, jaki mecz jest tworzony
+
+            // W widoku do tego momentu istnieje tylko kontekst pokoju, więc jest id pokoju, nie meczu.
+            // To nie tak, że mecz jest tworzony dopiero teraz i z serwisu leci id? ~MJ
+
             //Match match = matchService.CreateMatch(1, null, 2);
             matchService.StartMatch(1);
             // utworzenie meczu
@@ -55,24 +59,25 @@ namespace Muzziq.Controllers
 
         // nie wiem czy ten punkt wejscia będzie potrzebny docelowo
         // mecz się kończy z ostatnim pytaniem i to wystarczy chyba
-        public IActionResult EndMatch()
+        public IActionResult EndMatch(int matchId)
         {
             //matchService.EndMatch(_context.Matches.Find(1));
             // TODO zapisanie rozgrywki
 
             // TODO zwrócenie listy wyników
 
-            Match match = prepareTestData();
+            //Match match = prepareTestData();
             MatchSummaryViewModel matchSummaryViewModel = new MatchSummaryViewModel
             {
-                Match = match
+                //Match = match
                 //Match = _context.Matches.ToList()[0]
+                Match = new UtilsService(_context).GetMatchById(matchId)
             };
 
             return View("MatchSummaryView", matchSummaryViewModel);
         }
 
-        private Match prepareTestData()
+        /*private Match prepareTestData()
         {
             Match sampleMatch = new Match();
             sampleMatch.RoomId = 5;
@@ -100,6 +105,6 @@ namespace Muzziq.Controllers
             sampleMatch.Results = results;
 
             return sampleMatch;
-        }
+        }*/
     }
 }

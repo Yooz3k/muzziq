@@ -20,4 +20,4 @@ TODO lista przycisków
 
 <h4>Koniec meczu?</h4>
 <br />
-<input type="button" value="Zakończ" onclick="location.href='@Url.Action("EndMatch", "Match")'" />
+<input type="button" value="Zakończ" onclick="location.href='@Url.Action("EndMatch", "Match", new { matchId = Model.Match.Id })'" />
