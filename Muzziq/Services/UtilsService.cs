@@ -14,6 +14,7 @@ namespace Muzziq.Services
         Match GetMatchById(int matchId);
         Player GetPlayerById(int playerId);
         Song GetSongById(int songId);
+        Round GetRoundById(int roundId);
     }
 
     public class UtilsService : IUtilsService
@@ -56,6 +57,13 @@ namespace Muzziq.Services
                 .FirstOrDefault();
 
             return player.Id;
+        }
+
+        public Round GetRoundById(int roundId)
+        {
+            return _context.Rounds
+                .Where(r => r.Id.Equals(roundId))
+                .FirstOrDefault();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Muzziq.Controllers
         public RoomController(ApplicationDbContext context)
         {
             _context = context;
-            roomService = new RoomService(_context, new MatchService(_context, new UtilsService(_context)), new UtilsService(_context));
+            roomService = new RoomService(_context, new MatchService(_context, new UtilsService(_context), new SongService(_context)), new UtilsService(_context));
             wsService = new WSService( _context);
             availableSongs = new List<Song>();
             availableMatches = new List<Match>();

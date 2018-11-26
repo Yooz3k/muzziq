@@ -11,7 +11,7 @@ namespace Muzziq.Services
 {
     public interface IMatchService
     {
-        void StartMatch(int matchId);
+        Round StartMatch(int matchId);
         void EndMatch(Match match);
         Match CreateMatch(int roomId, List<Song> songs, int totalRoundsCount);
     }
@@ -20,11 +20,13 @@ namespace Muzziq.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IUtilsService _utilsService;
+        private readonly ISongService _songsService;
 
-        public MatchService(ApplicationDbContext context, IUtilsService utilsService)
+        public MatchService(ApplicationDbContext context, IUtilsService utilsService, ISongService songService)
         {
             _context = context;
             _utilsService = utilsService;
+            _songsService = songService;
         }
 
         public Match CreateMatch(int roomId, List<Song> songs, int totalRoundsCount)
@@ -40,20 +42,20 @@ namespace Muzziq.Services
             return match;
         }
 
-        public void StartMatch(int roomId)
+        public Round StartMatch(int roomId)
         {
             // TODO 
             // przygotować Match do rozgrywki (poustawiać graczy czy coś)
             var match = CreateMatch(roomId, null, 5);
             //var match = _context.Matches.Find(matchId);
 
-            StartRound(0, match);
+            return StartRound(0, match);
         }
 
         // TODO
         // Runda 0 odbywa się przy naciśnięciu "StartMatch"
         // każda kolejna aż do maks zdefiniowanej przy tworzeniu rozgrywki będzie trafiać bezpośrednio tutaj
-        private void StartRound(int roundNumber, Match match)
+        private Round StartRound(int roundNumber, Match match)
         {
             Song song = GetRandomSongFromList(match.Songs);
             SendSongToClients(song);
@@ -61,19 +63,20 @@ namespace Muzziq.Services
             Random rnd = new Random();
             int questionType = rnd.Next(5);
 
-            SetRandomQuestionForSong(match, questionType, song);
-
+            Round round = new Round();
+            SetRandomQuestionForSong(round, questionType, song);
             // TODO dodać poprawną odpowiedź do Answers
-            SetAnswers(questionType, match);
+            SetAnswers(questionType, round);
 
             GetReadyToStart();
 
-            DisplayQuestion(match.Question);
-            DisplayAnswers(match);
+            DisplayQuestion(round.Question);
+            DisplayAnswers(round);
 
             StartPlayingSong(song.BinaryContent);
 
             StartCountingTimeToAnswer();
+            return round;
         }
 
         private List<Song> GetRandomSongs(int questionType, string correctAnswer, int songsCount)
@@ -116,39 +119,7 @@ namespace Muzziq.Services
             //TODO 
             //Zamienić na faktycznie pobieranie z bazy!
             // To jest tylko do tworzenia niepoprawnych odpowiedzi
-            List<Song> songs = new List<Song>();
-            Song song1 = new Song();
-            song1.Album = "Discohłosta";
-            song1.Author = "Waloszek";
-            song1.Genre = "Disco Polo";
-            song1.Title = "Wóda zryje banie";
-            song1.Year = 2018;
-
-            Song song2 = new Song();
-            song2.Album = "Song 2";
-            song2.Author = "Blur";
-            song2.Genre = "Rock";
-            song2.Title = "Song 2";
-            song2.Year = 2000;
-
-            Song song3 = new Song();
-            song3.Album = "Song 3";
-            song3.Author = "AUTH3";
-            song3.Genre = "Rock3";
-            song3.Title = "Song 3";
-            song3.Year = 2011;
-
-            Song song4 = new Song();
-            song4.Album = "Song 4";
-            song4.Author = "AUTH4";
-            song4.Genre = "Rock4";
-            song4.Title = "Song 4";
-            song4.Year = 1996;
-
-            songs.Add(song1);
-            songs.Add(song2);
-            songs.Add(song3);
-            songs.Add(song4);
+            List<Song> songs = _songsService.GetAllSongs();
 
             return songs;
         }
@@ -164,6 +135,7 @@ namespace Muzziq.Services
             //TODO 
             // rozpocznij odliczanie do końca piosenki czy tam ogólny czas na odpowiedz
             // Moim zdaniem można to sobie darować ~ ŁK
+            // a na chuj mnie ten kaktus, do usunięcia ~AK
         }
 
         private void SendSongToClients(Song song)
@@ -180,10 +152,10 @@ namespace Muzziq.Services
             // wysłać na front (websocket?)
         }
 
-        private void DisplayAnswers(Match match)
+        private void DisplayAnswers(Round round)
         {
-            var correctAnswer = match.CorrectAnswer;
-            var answers = match.Answers;
+            var correctAnswer = round.CorrectAnswer;
+            var answers = round.Answers;
             // TODO 
             // wyswietlić na froncie wszystkie odpowiedzi (websocket)
             // w zasadzie nie wiem czy potrzebujemy w tym miejscu rozroznienia na poprawne i niepoprawne odpowiedzi
@@ -203,68 +175,74 @@ namespace Muzziq.Services
             return songs[r];
         }
 
-        private void SetRandomQuestionForSong(Match match, int questionType, Song song)
+        private void SetRandomQuestionForSong(Round round, int questionType, Song song)
         {
             switch (questionType)
             {
                 case 0:
-                    match.Question = "Jaki tytuł nosi ten utwór?";
-                    match.CorrectAnswer.Content = song.Title;
+                    round.Question = "Jaki tytuł nosi ten utwór?";
+                    round.CorrectAnswer.Content = song.Title;
+                    round.Answers.Add(round.CorrectAnswer);
                     break;
                 case 1:
-                    match.Question = "Podaj autora tego utworu";
-                    match.CorrectAnswer.Content = song.Author;
+                    round.Question = "Podaj autora tego utworu";
+                    round.CorrectAnswer.Content = song.Author;
+                    round.Answers.Add(round.CorrectAnswer);
                     break;
                 case 2:
-                    match.Question = "Z jakiego albumu pochodzi ten utwór?";
-                    match.CorrectAnswer.Content = song.Album;
+                    round.Question = "Z jakiego albumu pochodzi ten utwór?";
+                    round.CorrectAnswer.Content = song.Album;
+                    round.Answers.Add(round.CorrectAnswer);
                     break;
                 case 3:
-                    match.Question = "Do jakiego gatunku muzycznego należy ten kawałek?";
-                    match.CorrectAnswer.Content = song.Genre;
+                    round.Question = "Do jakiego gatunku muzycznego należy ten kawałek?";
+                    round.CorrectAnswer.Content = song.Genre;
+                    round.Answers.Add(round.CorrectAnswer);
                     break;
                 case 4:
-                    match.Question = "W którym roku powstała ta piosenka?";
-                    match.CorrectAnswer.Content = song.Year.ToString();
+                    round.Question = "W którym roku powstała ta piosenka?";
+                    round.CorrectAnswer.Content = song.Year.ToString();
                     break;
             }
         }
 
-        private void SetAnswers(int questionType, Match match)
+        private void SetAnswers(int questionType, Round round)
         {
-            List<Song> answersSongs = GetRandomSongs(questionType, match.CorrectAnswer.Content, 3);
+            List<Song> answersSongs = GetRandomSongs(questionType, round.CorrectAnswer.Content, 3);
 
             foreach (Song song in answersSongs)
             {
                 switch (questionType)
                 {
                     case 0:
-                        match.Answers.Add(new Answer(song.Title));
+                        round.Answers.Add(new Answer(song.Title));
                         break;
                     case 1:
-                        match.Answers.Add(new Answer(song.Author));
+                        round.Answers.Add(new Answer(song.Author));
                         break;
                     case 2:
-                        match.Answers.Add(new Answer(song.Album));
+                        round.Answers.Add(new Answer(song.Album));
                         break;
                     case 3:
-                        match.Answers.Add(new Answer(song.Genre));
+                        round.Answers.Add(new Answer(song.Genre));
                         break;
                     case 4:
-                        match.Answers.Add(new Answer(song.Year.ToString()));
+                        round.Answers.Add(new Answer(song.Year.ToString()));
                         break;
                 }
             }
         }
 
-        public Boolean ParsePlayerAnswer(int matchId, int playerId, string playerAnswer)
+        public Boolean ParsePlayerAnswer(int matchId, int playerId, int roundId, string playerAnswer)
         {
             var match = _utilsService.GetMatchById(matchId);
             var player = _utilsService.GetPlayerById(playerId);
-            var playerWasCorrect = match.CorrectAnswer.Content == playerAnswer;
+            var round = _utilsService.GetRoundById(roundId);
+
+            var playerWasCorrect = round.CorrectAnswer.Content == playerAnswer;
             if (playerWasCorrect)
             {
-                OnCorrectAnswer(match, player);
+                OnCorrectAnswer(match, round, player);
             }
             else
             {
@@ -273,7 +251,7 @@ namespace Muzziq.Services
             return playerWasCorrect;
         }
 
-        public void OnCorrectAnswer(Match match, Player player)
+        public void OnCorrectAnswer(Match match, Round round, Player player)
         {
             foreach (var result in match.Results)
             {
@@ -285,7 +263,7 @@ namespace Muzziq.Services
                 }
             }
 
-            EndRound(match);
+            EndRound(round, match);
         }
 
         public void OnInCorrectAnswer(Match match, Player player)
@@ -322,21 +300,21 @@ namespace Muzziq.Services
             return sortedResults;
         }
 
-        public void EndRound(Match match)
+        public void EndRound(Round round, Match match)
         {
-            match.CurrentRoundNumber++;
+            round.CurrentRoundNumber++;
             _context.Update(match);
             _context.SaveChanges();
 
             UpdateRanking(match.Results);
 
-            if (match.CurrentRoundNumber == match.TotalRoundsCount)
+            if (round.CurrentRoundNumber == match.TotalRoundsCount)
             {
                 EndMatch(match);
             }
             else
             {
-                StartRound(match.CurrentRoundNumber, match);
+                StartRound(round.CurrentRoundNumber, match);
             }
         }
     }
