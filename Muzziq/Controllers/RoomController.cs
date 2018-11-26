@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Muzziq.Data;
 using Muzziq.Models;
 using Muzziq.Models.Entities;
+using Muzziq.Models.MatchViewModels;
 using Muzziq.Models.RoomViewModels;
 using Muzziq.Services;
 
 namespace Muzziq.Controllers
 {
-  
+
     public class RoomController : Controller
     {
-        // listy na potrzeby testów interfejsu, docelowo te obiekty nie będą trzymane w listach, ale w bazie danych
-        private List<Song> availableSongs;
-        private List<Match> availableMatches;
-        private CreateRoomViewModel createRoomViewModel;
-
         private readonly RoomService roomService;
         private readonly WSService wsService;
 
@@ -28,7 +25,7 @@ namespace Muzziq.Controllers
         {
             _context = context;
             roomService = new RoomService(_context, new MatchService(_context, new UtilsService(_context)), new UtilsService(_context));
-            wsService = new WSService(roomService, _context);
+
             availableSongs = new List<Song>();
             availableMatches = new List<Match>();
 
@@ -64,47 +61,30 @@ namespace Muzziq.Controllers
 
             createRoomViewModel = new CreateRoomViewModel(availableSongs);
         }
-
-       
-
+               
         public IActionResult ChooseRoomView()
         {
-            Room room1 = new Room();
-            room1.Name = "ekipa z zielonego jeepa";
-            room1.Players = new List<Player>();
-            room1.Players.Add(new Player(null, "1"));
-            room1.Players.Add(new Player(null, "2"));
+            List<Room> rooms = _context.Rooms.ToList();
+            rooms.ForEach((room) => _context.Entry(room).Collection(s => s.Players).Load());
 
-            Room room2 = new Room();
-            room2.Name = "weź pigułke";
-            room2.Players = new List<Player>();
-            room2.Players.Add(new Player(null, "3"));
-            room2.Players.Add(new Player(null, "4"));
-
-            List<Room> rooms = new List<Room>
+            ChooseRoomViewModel chooseRoomViewModel = new ChooseRoomViewModel
             {
-                room1,
-                room2
+                Rooms = rooms,
+                RoomCapacity = 6 //TODO: jako stała
             };
 
-            rooms = _context.Rooms.ToList();
-            rooms.ForEach((room) => _context.Entry(room).Collection(s => s.Players).Load());
-            ViewData["Rooms"] = rooms;
-            //ViewData["Rooms"] = rooms; ^--- DOCELOWO TO MA BYĆ
-
-            return View();
+            return View(chooseRoomViewModel);
         }
 
         public IActionResult CreateRoomView()
         {
-            // TOOD zwróć listę dostępnych piosenek
-            
-            return View(createRoomViewModel);
+            CreateRoomViewModel model = new CreateRoomViewModel(_context.Songs.ToList());
+
+            return View(model);
         }
 
         public IActionResult WaitForGameView(int roomID, int playerID)
         {
-            // TODO zwróć nazwę pokoju oraz listę graczy
             Room room = _context.Rooms.Find(roomID);
             if (room != null)
             {
@@ -118,10 +98,16 @@ namespace Muzziq.Controllers
         [HttpPost]
         public IActionResult CreateRoom(String name, int[] songIds)
         {
+            //Dane z formularza: name to nazwa pokoju, songIds to id-ki utworów
 
-            // TODO przechwycenie danych z formularza - nazwa pokoju, wybrane utwory
             // ownerId też musi być przekazywany z frontu (po stworzeniu formularza do tworzenia graczy i ich poprawnego logowania)
             // ownerId to będzie ten co kliknął przycisk "Utwórz pokój"
+
+            //^
+            //|
+            //ID gracza nie jest przechwytywane we froncie, tylko tutaj.
+            //Jeżeli nawigacja przejdzie do tej metody, to mamy gracza, który stworzył pokój.
+            int playerId = GetPlayerId();
 
             Room room = _context.Rooms.Where(x => x.Name == name).FirstOrDefault();
 
@@ -174,6 +160,12 @@ namespace Muzziq.Controllers
         public IActionResult Test()
         {
             return View();
+        }
+
+        private int GetPlayerId()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return new UtilsService(_context).getPlayerByUserId(userId);
         }
     }
 }

@@ -15,6 +15,17 @@ namespace Muzziq.Models.RoomViewModels
         {
             this.Room = room;
             this.RoomCapacity = roomCapacity;
+        }
+
+        public WaitForGameViewModel(Room room)
+        {
+            this.Room = room;
+        }
+
+        public WaitForGameViewModel(Room room, int roomCapacity, int ownerId)
+        {
+            this.Room = room;
+            this.RoomCapacity = roomCapacity;
             this.PlayerID = playerID;
             this.RoomID = roomID;
         }
