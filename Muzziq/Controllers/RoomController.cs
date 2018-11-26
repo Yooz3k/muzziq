@@ -19,13 +19,15 @@ namespace Muzziq.Controllers
     {
         private readonly RoomService roomService;
         private readonly WSService wsService;
-
+        private List<Song> availableSongs;
+        private List<Match> availableMatches;
+        private CreateRoomViewModel createRoomViewModel;
         private readonly ApplicationDbContext _context;
         public RoomController(ApplicationDbContext context)
         {
             _context = context;
             roomService = new RoomService(_context, new MatchService(_context, new UtilsService(_context)), new UtilsService(_context));
-
+            wsService = new WSService( _context);
             availableSongs = new List<Song>();
             availableMatches = new List<Match>();
 
@@ -92,7 +94,7 @@ namespace Muzziq.Controllers
             }
 
 
-            return View(new WaitForGameViewModel(room,6,playerID, roomID)); 
+            return View(new WaitForGameViewModel(room,6,playerID)); 
         }
 
         [HttpPost]
@@ -114,7 +116,7 @@ namespace Muzziq.Controllers
             Player player = new Player(new ApplicationUser(), "User");
             _context.Add(player);
             _context.SaveChanges();
-            if (room == null) //to taki mock, jeżeli wpiszesz to samo id to , do pokoju
+            if (room == null) //to taki mock, jeżeli zdupikujesz name pokoju
                 room = roomService.CreateRoom(player.Id, name, songIds);
 
             player.Nickname = player.Nickname + player.Id.ToString();
@@ -138,16 +140,12 @@ namespace Muzziq.Controllers
             return null;
         }
 
-        public IActionResult JoinRoom(int roomId, int playerId)
+        public IActionResult JoinRoom(int roomId)
         {
             //do testów bo na razie widoki nie zwracają id_playerów
-            Player player = new Player(new ApplicationUser(), "User");
-            _context.Add(player);
-            _context.SaveChanges();
+            Player player = _context.Players.Find(GetPlayerId());
             roomService.JoinRoom(roomId, player.Id);
-            player.Nickname = player.Nickname + player.Id.ToString();
-            _context.Update(player);
-            _context.SaveChanges();
+            //poinformuj reszte graczy
             WSMessage message = new WSMessage(WSMessageType.PLAYER_JOIN, player.Id.ToString() + " " + player.Nickname);
             wsService.SendToList(roomId, message);
             return RedirectToAction("WaitForGameView", new
