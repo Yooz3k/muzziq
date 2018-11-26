@@ -11,6 +11,9 @@ namespace Muzziq.Models
         SCORE,
         AUDIO_START,
         AUDIO_END,
+        PLAYER_LEAVE,
+        PLAYER_JOIN,
+        ROOM_SUBSCRIBE,
         OTHER,
     }
     public class WSMessage

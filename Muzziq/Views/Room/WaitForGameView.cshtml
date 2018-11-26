@@ -3,13 +3,18 @@
 @{
     ViewData["Title"] = "Oczekiwanie na grę";
 }
+<script src="~/js/waitingForRoom.js" asp-append-version="true"></script>
+<input id="connectionUrl" style="display:none"/>
+<input id="playerID" style="display:none" value="@Model.PlayerID"/>
+<input id="roomID" style="display:none" value="@Model.RoomID" />
 
 <h2>@ViewData["Title"]</h2>
 <p>@Model.Room.Name</p>
 <h3>Lista graczy:</h3>
 @await Html.PartialAsync("_PlayersTable.cshtml")
 
-@if (Model.OwnerId.Equals(Model.Room.OwnerId))
+<button id="leaveLobbyButton">Wychodźę z gry !</button>
+@if (Model.PlayerID.Equals(Model.Room.OwnerId))
 {
     <input type="button" value="Start!" onclick="location.href='@Url.Action("StartMatch", "Match", new { roomId = Model.Room.Id })'" />
 }

@@ -11,6 +11,7 @@ namespace Muzziq.Services
         Room CreateRoom(int ownerId, String name, int[] songIds);
         void JoinRoom(int roomId, int playerId);
         void LeaveRoom(Room room, Player player);
+        List<int> getPlayersIdsList(int roomID);
     }
 
     public class RoomService : IRoomService
@@ -63,6 +64,17 @@ namespace Muzziq.Services
             room.Players.Remove(player);
             _context.Update(room);
             _context.SaveChanges();
+        }
+
+        public List<int> getPlayersIdsList(int roomID)
+        {
+            Room room = _context.Rooms.Find(roomID);
+            List<int> playersdId = new List<int>();
+            room.Players.ForEach(player =>
+            {
+                playersdId.Add(player.Id);
+            });
+            return playersdId;
         }
     }
 }
