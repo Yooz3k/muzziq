@@ -10,5 +10,7 @@ namespace Muzziq.Models.MatchViewModels
     {
         public Match Match { get; set; }
         public Room Room { get; set; }
+
+        public Round Round { get; set; }
     }
 }

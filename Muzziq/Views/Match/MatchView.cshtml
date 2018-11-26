@@ -1,7 +1,7 @@
 ﻿@model MatchViewModel
 
 <h2>Trwa rozgrywka!</h2>
-@Model.Room.Name
+<h4>Pokój @Model.Room.Name</h4>
 <br />
 
 @await Html.PartialAsync("_UsersScoreTable.cshtml")

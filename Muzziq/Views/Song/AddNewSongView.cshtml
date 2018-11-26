@@ -27,7 +27,7 @@
 	<input name="Year"  asp-for="Year" value="@Model.Year" pattern="^[1-2][0-9]{3}$" class="form-control" />
 
 	<h3>Wybierz plik</h3>
-	<input name="File" asp-for="File" value="@Model.File"  type="file"  accept=".mp3" />
+	<input name="File" class="btn btn-default" asp-for="File" value="@Model.File"  type="file"  accept=".mp3" />
 	<br />
-	<button type="submit" class="btn btn-default">Dodaj</button>
+	<button type="submit" class="btn btn-primary">Dodaj</button>
 </form>

@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Muzziq.Data;
 using Muzziq.Models.Entities;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Muzziq.Services
 {
     public interface ISongService
     {
         void SaveSong(Song song);
+        List<Song> GetAllSongs();
     }
 
     public class SongService : ISongService
@@ -22,6 +25,11 @@ namespace Muzziq.Services
         {
             _context.Songs.Add(song);
             _context.SaveChanges();
+        }
+
+        public List<Song> GetAllSongs()
+        {
+            return _context.Songs.ToList();
         }
     }
 }

@@ -13,13 +13,7 @@ namespace Muzziq.Models.Entities
         public DateTime StartDate { get; set; }
         public List<Song> Songs { get; set; }
         public List<Result> Results { get; set; }
-        public string Question { get; set; }
-        public Answer CorrectAnswer { get; set; }
-        public Dictionary<int, bool> UsersAnswered;
-        // założenie: z serwera dostaję już pomieszaną listę odpowiedzi
-        public List<Answer> Answers { get; set; }
         public int TotalRoundsCount { get; set; }
-        public int CurrentRoundNumber { get; set; }
 
         // FIXME nie powinien być w ogóle używany
         public Match()
@@ -27,22 +21,8 @@ namespace Muzziq.Models.Entities
             // Id, RoomId, WinnerId, Question, TotalRoundsCount - ?
             Results = new List<Result>();
             StartDate = DateTime.Now;
-            CorrectAnswer = new Answer();
-            Answers = new List<Answer>();
-            UsersAnswered = new Dictionary<int, bool>();
-            Songs = new List<Song>();
-            CurrentRoundNumber = 0;
 
             
-            Question = "";
-            Answer a1 = new Answer("odp 1");
-            Answer a2 = new Answer("odp 2");
-            Answer a3 = new Answer("odp 3");
-            Answer a4 = new Answer("odp 4");
-            Answers.Add(a1);
-            Answers.Add(a2);
-            Answers.Add(a3);
-            Answers.Add(a4);
 
 
         }
@@ -58,10 +38,6 @@ namespace Muzziq.Models.Entities
             RoomId = roomId;
             TotalRoundsCount = totalRoundsCount;
             StartDate = DateTime.Now;
-            CorrectAnswer = new Answer();
-            Answers = new List<Answer>();
-            UsersAnswered = new Dictionary<int, bool>();
-            CurrentRoundNumber = 0;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Muzziq.Data;
+using Muzziq.Models;
 using Muzziq.Models.Entities;
 using Muzziq.Models.MatchViewModels;
 using Muzziq.Services;
@@ -14,10 +15,11 @@ namespace Muzziq.Controllers
     {
         private readonly MatchService matchService;
         private readonly ApplicationDbContext _context;
-        public MatchController(ApplicationDbContext context, IUtilsService utilsService)
+
+        public MatchController(ApplicationDbContext context, IUtilsService utilsService, ISongService songService)
         {
             _context = context;
-            matchService = new MatchService(_context, utilsService);
+            matchService = new MatchService(_context, utilsService, songService);
         }
 
         public IActionResult MatchView()
@@ -27,7 +29,8 @@ namespace Muzziq.Controllers
             MatchViewModel matchViewModel = new MatchViewModel
             {
                 Match = _context.Matches.ToList()[0],
-                Room = _context.Rooms.ToList()[0]
+                Room = _context.Rooms.ToList()[0],
+                Round = _context.Rounds.ToList()[0]
             };
             
             return View(matchViewModel);
@@ -42,7 +45,7 @@ namespace Muzziq.Controllers
 
             int matchId = 1;
             //Match match = matchService.CreateMatch(1, null, 2);
-            matchService.StartMatch(roomId);
+            Round firstRound = matchService.StartMatch(roomId);
             // utworzenie meczu
 
             // rozgrywka
@@ -52,7 +55,8 @@ namespace Muzziq.Controllers
             {
                 //Match = _context.Matches.ToList()[0],
                 Match = new UtilsService(_context).GetMatchById(matchId),
-                Room = new UtilsService(_context).GetRoomById(roomId)
+                Room = new UtilsService(_context).GetRoomById(roomId),
+                Round = firstRound
             };
 
             return View("MatchView", matchViewModel);
