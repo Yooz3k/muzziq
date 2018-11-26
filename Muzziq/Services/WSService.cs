@@ -25,13 +25,11 @@ namespace Muzziq.Services
         private static Dictionary<Guid, WebSocket> WebSockets = new Dictionary<Guid, WebSocket>();
         private static Dictionary<int, Dictionary<int, WebSocket>> RoomWebSockets = new Dictionary<int, Dictionary<int, WebSocket>>();
         private const int BUFFER_SIZE = 4096;
-        private readonly IRoomService _roomService;
         private readonly ApplicationDbContext _context;
 
-        public WSService(IRoomService roomService, ApplicationDbContext applicationDbContext)
+        public WSService(ApplicationDbContext applicationDbContext)
         {
             _context = applicationDbContext;
-            _roomService = roomService;
         }
 
         public WSService()

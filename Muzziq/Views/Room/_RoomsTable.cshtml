@@ -25,7 +25,7 @@
                 <td>
                     @if (@room.Players.Count < Model.RoomCapacity)
                     {
-                        <input type="button" value="Dołącz" onclick="location.href='@Url.Action("JoinRoom", "Room", new {roomId = room.Id, playerId = 1 })'" />
+                        <input type="button" value="Dołącz" onclick="location.href='@Url.Action("JoinRoom", "Room", new {roomId = room.Id})'" />
                     }
                     else
                     {
