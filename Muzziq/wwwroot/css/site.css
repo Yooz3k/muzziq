@@ -39,11 +39,32 @@ h4 {
 	font-size: 18px;
 }
 
-/* zapewnione przez szablon */
+.timer_info {
+	font-size: 15px;
+	font-weight: bold;
+	display: inline-block;
+}
 
+#timer_container {
+	float: right;
+}
+
+.theader-dark {
+	background-color: #32363d;
+	color: white;
+}
+
+#timer {
+	display: inline-block;
+	font-size: 50px;
+	font-weight: bold;
+	color: red;
+}
+
+/* zapewnione przez szablon */
 body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+	padding-top: 50px;
+	padding-bottom: 20px;
 }
 
 /* Wrapping element */

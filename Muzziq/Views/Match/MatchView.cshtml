@@ -1,23 +1,16 @@
-﻿@model Muzziq.Models.MatchViewModels.MatchViewModel
+﻿@model MatchViewModel
 
 <h2>Trwa rozgrywka!</h2>
 @Model.Room.Name
 <br />
 
-<h3>Wyniki:</h3>
-TODO lista wyników
-<br />
+@await Html.PartialAsync("_UsersScoreTable.cshtml")
 
-<h3>Kategoria</h3>
-TODO kategorie, podpowiedzi
-<br />
+@await Html.PartialAsync("_PromptsAndProgressbar")
 
-TODO progressbar, czas do końca
-<br />
-
-TODO lista przycisków
-<br />
-
+@await Html.PartialAsync("_Answers.cshtml")
+<br/>
+TODO tylko dla admina
 <h4>Koniec meczu?</h4>
 <br />
 <input type="button" value="Zakończ" onclick="location.href='@Url.Action("EndMatch", "Match", new { matchId = Model.Match.Id })'" />

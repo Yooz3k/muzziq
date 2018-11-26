@@ -1,0 +1,22 @@
+﻿@model MatchViewModel
+
+<h3>Wyniki</h3>
+<table class="table table-bordered table-responsive table-hover" width="200">
+	<thead class="theader-dark">
+		<tr class="theader-dark">
+			<td>Wynik</td>
+			<td>Gracz</td>
+			<td>Stan</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (Result result in Model.Match.Results)
+		{
+			<tr>
+				<td>@result.Points</td>
+				<td>@result.Player.Nickname</td>
+				<td>@Model.Match.UsersAnswered[@result.Player.Id]</td>
+			</tr>
+		}
+	</tbody>
+</table>
