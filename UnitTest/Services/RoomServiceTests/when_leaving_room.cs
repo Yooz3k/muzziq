@@ -31,28 +31,24 @@ namespace UnitTest.Services.RoomServiceTests
         [Fact]
         public void player_should_be_removed_from_room()
         {
-            var player1 = _fixture.Create<Player>();
-            var player2 = _fixture.Create<Player>();
+            var player = _fixture.Create<Player>();
             var dbOptions = new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase("MuzziqDB_LeaveRoom").Options;
             using (var context = new ApplicationDbContext(dbOptions))
             {
-                context.Players.Add(player1);
-                context.Players.Add(player2);
-                context.SaveChanges();
+                context.Players.Add(player);
                 var room = _fixture.Create<Room>();
-                room.Players.Add(context.Players.First(x => x.Id == player1.Id));
-                room.Players.Add(context.Players.First(x => x.Id == player2.Id));
+                room.Players.Add(player);
                 context.Room.Add(room);
                 context.SaveChanges();
                 var sut = new RoomService(context, _matchService, _utilsService);
 
-                sut.LeaveRoom(room, player1);
+                sut.LeaveRoom(room, player);
             }
 
             using (var context = new ApplicationDbContext(dbOptions))
             {
                 Assert.Equal(1, context.Room.Count());
-                var savedPlayer1 = context.Players.ToList().Single(item => item.Id == player1.Id);
+                var savedPlayer1 = context.Players.ToList().Single(item => item.Id == player.Id);
                 var savedRoom = context.Room.First();  
                 Assert.Null(savedRoom.Players.FirstOrDefault(x => x.Id == savedPlayer1.Id && x.Nickname == savedPlayer1.Nickname));
             }
