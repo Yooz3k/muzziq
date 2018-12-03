@@ -16,7 +16,6 @@ namespace UnitTest.Services.RoomServiceTests
         private readonly IUtilsService _utilsService;
         private readonly IMatchService _matchService;
         private readonly Fixture _fixture;
-        private readonly DbContextOptions<ApplicationDbContext> _dbOptions;
 
         public when_joining_room()
         {
@@ -27,7 +26,6 @@ namespace UnitTest.Services.RoomServiceTests
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
             _utilsService = _fixture.Freeze<IUtilsService>();
             _matchService = _fixture.Freeze<IMatchService>();
-            _dbOptions = new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase("MuzziqDB").Options;
         }
 
         [Fact]
@@ -35,7 +33,8 @@ namespace UnitTest.Services.RoomServiceTests
         {
             var playerId = _fixture.Create<int>();
             var player = _fixture.Build<Player>().With(pl => pl.Id, playerId).Create();
-            using (var context = new ApplicationDbContext(_dbOptions))
+            var dbOptions = new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase("MuzziqDB_JoinRoom").Options;
+            using (var context = new ApplicationDbContext(dbOptions))
             {
                 _utilsService.GetPlayerById(playerId).Returns(player);
                 var roomId = _fixture.Create<int>();
@@ -49,7 +48,7 @@ namespace UnitTest.Services.RoomServiceTests
                 sut.JoinRoom(roomId, playerId);
             }
 
-            using (var context = new ApplicationDbContext(_dbOptions))
+            using (var context = new ApplicationDbContext(dbOptions))
             {
                 Assert.Equal(1, context.Room.Count());
                 var savedRoom = context.Room.First();
