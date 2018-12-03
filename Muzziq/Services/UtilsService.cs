@@ -38,7 +38,7 @@ namespace Muzziq.Services
 
         public Room GetRoomById(int roomId)
         {
-            return _context.Rooms.Where(r => r.Id == roomId).Include(r => r.Players).FirstOrDefault();
+            return _context.Room.Where(r => r.Id == roomId).Include(r => r.Players).FirstOrDefault();
         }
 
         public Song GetSongById(int songId)

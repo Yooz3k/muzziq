@@ -66,7 +66,7 @@ namespace Muzziq.Controllers
                
         public IActionResult ChooseRoomView()
         {
-            List<Room> rooms = _context.Rooms.ToList();
+            List<Room> rooms = _context.Room.ToList();
             rooms.ForEach((room) => _context.Entry(room).Collection(s => s.Players).Load());
 
             ChooseRoomViewModel chooseRoomViewModel = new ChooseRoomViewModel
@@ -87,7 +87,7 @@ namespace Muzziq.Controllers
 
         public IActionResult WaitForGameView(int roomID, int playerID)
         {
-            Room room = _context.Rooms.Find(roomID);
+            Room room = _context.Room.Find(roomID);
             if (room != null)
             {
                 _context.Entry(room).Collection(s => s.Players).Load();
@@ -109,17 +109,17 @@ namespace Muzziq.Controllers
             //|
             //ID gracza nie jest przechwytywane we froncie, tylko tutaj.
             //Jeżeli nawigacja przejdzie do tej metody, to mamy gracza, który stworzył pokój.
-            int playerId = GetPlayerId();
+            var playerId = GetPlayerId();
 
-            Room room = _context.Rooms.Where(x => x.Name == name).FirstOrDefault();
+            var room = _context.Room.FirstOrDefault(x => x.Name == name);
 
-            Player player = new Player(new ApplicationUser(), "User");
+            var player = new Player(new ApplicationUser(), "User");
             _context.Add(player);
             _context.SaveChanges();
-            if (room == null) //to taki mock, jeżeli zdupikujesz name pokoju
+            if (room == null) 
                 room = roomService.CreateRoom(player.Id, name, songIds);
 
-            player.Nickname = player.Nickname + player.Id.ToString();
+            player.Nickname = player.Nickname + player.Id;
             _context.Update(player);
             _context.SaveChanges();
             return RedirectToAction("WaitForGameView", new
@@ -163,7 +163,8 @@ namespace Muzziq.Controllers
         private int GetPlayerId()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return new UtilsService(_context).getPlayerByUserId(userId);
+            return userId is null ? _context.Players.First().Id 
+                : new UtilsService(_context).getPlayerByUserId(userId);
         }
     }
 }

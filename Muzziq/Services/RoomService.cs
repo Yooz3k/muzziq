@@ -44,7 +44,7 @@ namespace Muzziq.Services
             room.OwnerId = ownerId;
             room.Name = name;
 
-            _context.Rooms.Add(room);
+            _context.Room.Add(room);
             _context.SaveChanges();
             return room;
         }
@@ -68,7 +68,7 @@ namespace Muzziq.Services
 
         public List<int> getPlayersIdsList(int roomID)
         {
-            Room room = _context.Rooms.Find(roomID);
+            Room room = _context.Room.Find(roomID);
             List<int> playersdId = new List<int>();
             room.Players.ForEach(player =>
             {

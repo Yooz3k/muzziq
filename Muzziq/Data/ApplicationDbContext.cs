@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Muzziq.Models;
 using Muzziq.Models.Entities;
@@ -28,6 +24,6 @@ namespace Muzziq.Data
         public DbSet<Song> Songs { get; set; }
         public DbSet<Match> Matches { get; set; }
         public DbSet<Result> Results { get; set; }
-        public DbSet<Room> Rooms { get; set; }
+        public DbSet<Room> Room { get; set; }
     }
 }

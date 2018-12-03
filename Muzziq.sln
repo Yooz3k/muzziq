@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Muzziq", "Muzziq\Muzziq.csproj", "{DB3A49DE-6FA3-4C0A-96A8-D141F88A08D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Muzziq", "Muzziq\Muzziq.csproj", "{DB3A49DE-6FA3-4C0A-96A8-D141F88A08D0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{EE8D9957-6B10-41E2-A562-F1A4A76C46A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{1F283CEF-4D59-45B9-BC0D-3F2DCECDF500}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{DB3A49DE-6FA3-4C0A-96A8-D141F88A08D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB3A49DE-6FA3-4C0A-96A8-D141F88A08D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB3A49DE-6FA3-4C0A-96A8-D141F88A08D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE8D9957-6B10-41E2-A562-F1A4A76C46A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE8D9957-6B10-41E2-A562-F1A4A76C46A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE8D9957-6B10-41E2-A562-F1A4A76C46A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE8D9957-6B10-41E2-A562-F1A4A76C46A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F283CEF-4D59-45B9-BC0D-3F2DCECDF500}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F283CEF-4D59-45B9-BC0D-3F2DCECDF500}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F283CEF-4D59-45B9-BC0D-3F2DCECDF500}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F283CEF-4D59-45B9-BC0D-3F2DCECDF500}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -29,7 +29,7 @@ namespace Muzziq.Controllers
             MatchViewModel matchViewModel = new MatchViewModel
             {
                 Match = _context.Matches.ToList()[0],
-                Room = _context.Rooms.ToList()[0],
+                Room = _context.Room.ToList()[0],
                 Round = _context.Rounds.ToList()[0]
             };
             
