@@ -9,12 +9,12 @@ using Xunit;
 
 namespace IntegrationTests
 {
-    public class RoomRouteShould : IClassFixture<TestSetup>
+    public class room_route_should : IClassFixture<TestSetup>
     {
         private readonly HttpClient _client;
         private readonly DbContextOptions<ApplicationDbContext> _dbOptions;
 
-        public RoomRouteShould(TestSetup setup)
+        public room_route_should(TestSetup setup)
         {
             _client = setup.Client;
             _dbOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -23,7 +23,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public async Task CreateNewRoom()
+        public async Task create_new_room()
         {
             var fixture = new Fixture();
             var name = fixture.Create<string>();

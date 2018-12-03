@@ -46,15 +46,12 @@ namespace Muzziq.Services
             return _context.Songs.Find(songId);
         }
 
-        public int getPlayerByUserId(string userId)
+        public int GetPlayerByUserId(string userId)
         {
-            //czy to dobre miejsce na tę metodę?
-            //int playerId = 1; //docelowo równe wynikowi zapytania o id
             //TODO: wyszukanie id playera dla określonego id usera
 
-            Player player = _context.Players
-                .Where(p => p.User.Id.Equals(userId))
-                .FirstOrDefault();
+            var player = _context.Players
+                .FirstOrDefault(p => p.User.Id.Equals(userId));
 
             return player.Id;
         }
@@ -62,8 +59,7 @@ namespace Muzziq.Services
         public Round GetRoundById(int roundId)
         {
             return _context.Rounds
-                .Where(r => r.Id.Equals(roundId))
-                .FirstOrDefault();
+                .FirstOrDefault(r => r.Id.Equals(roundId));
         }
     }
 }

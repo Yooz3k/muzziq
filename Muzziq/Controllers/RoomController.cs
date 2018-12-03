@@ -164,7 +164,7 @@ namespace Muzziq.Controllers
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             return userId is null ? _context.Players.First().Id 
-                : new UtilsService(_context).getPlayerByUserId(userId);
+                : new UtilsService(_context).GetPlayerByUserId(userId);
         }
     }
 }
